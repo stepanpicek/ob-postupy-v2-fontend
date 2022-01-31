@@ -1,24 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+import MainTheme from './components/UI/MainTheme';
+import Router from './Router';
+import DateAdapter from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import cs from 'date-fns/locale/cs';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MainTheme>
+      <LocalizationProvider dateAdapter={DateAdapter} locale={cs}>
+        <Router />
+      </LocalizationProvider>
+    </MainTheme>
   );
 }
 

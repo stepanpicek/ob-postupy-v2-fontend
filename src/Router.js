@@ -14,11 +14,13 @@ import Strava from "./pages/dashboard/Strava";
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import AllRaces from "./pages/race/AllRaces";
+import CalibrateMap from "./pages/race/CalibrateMap";
 import CreateRace from "./pages/race/CreateRace";
 import EditRace from "./pages/race/EditRace";
 import PrivateRaces from "./pages/race/PrivateRaces";
 import PublicRaces from "./pages/race/PublicRaces";
 import RaceDetail from "./pages/race/RaceDetail";
+import { CalibrationContextProvider } from "./store/calibration-context";
 
 const Router = () => {
     return (
@@ -39,6 +41,7 @@ const Router = () => {
                 <Route path="strava" element={<Strava />} />
                 <Route path="vytvorit-zavod" element={<CreateRace />} />
                 <Route path="editovat-zavod/:raceId" element={<EditRace />} />
+                <Route path="kalibrovat-mapu/:raceId" element={<CalibrationContextProvider><CalibrateMap /></CalibrationContextProvider>} />
                 <Route path="verejne-zavody" element={<PublicRaces />} />
                 <Route path="moje-zavody" element={<PrivateRaces />} />
             </Route>

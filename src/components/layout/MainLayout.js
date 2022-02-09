@@ -5,9 +5,9 @@ import { Outlet } from "react-router-dom";
 
 const MainLayout = () => {
     return(
-        <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex'}}>
             <TopMenu />
-            <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+            <Box component="main" sx={{ flexGrow: 1, p: 3}}>
                 <Toolbar />
                 <Outlet />
             </Box>            

@@ -3,67 +3,86 @@ import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { Chip } from '@mui/material';
+import { Chip, ListItemButton, ListItemIcon } from '@mui/material';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import EventIcon from '@mui/icons-material/Event';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import PersonIcon from '@mui/icons-material/Person';
+import SettingsIcon from '@mui/icons-material/Settings';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PeopleIcon from '@mui/icons-material/People';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 
-const RACE_ITEMS = [
-    {title: 'Veřejné závody', url: 'verejne-zavody'},
-    {title: 'Moje závody', url: 'moje-zavody'},
-    {title: 'Vytvoření závodu', url: 'vytvorit-zavod'},
-];
+const listButtonStyle = {
+    mx: 2,
+    my: 1,
+    '&:hover':{        
+        borderRadius: '5px',
+        color:'#f1f1f1',
+        background:'rgb(55, 55, 55)'
+    },
+    '&.Mui-selected:hover': {
+        borderRadius: '5px',
+        background: '#2e7d32'
+    },
+    '&.Mui-selected': {
+        borderRadius: '5px',
+        background: '#2e7d32'
+    },
+};
 
-const USER_ITEMS = [
-    {title: 'Profil', url: 'profil'},
-    {title: 'Strava', url: 'strava'},
+const MENU_ITEMS = [
+    { title: 'Nástěnka', url: '/ucet', icon: <DashboardIcon /> },
+    { title: 'Moje závody', url: '/ucet/moje-zavody', icon: <EventIcon /> },
+    { title: 'Vytvoření závodu', url: '/ucet/vytvorit-zavod', icon: <AddBoxIcon /> },
+    { title: 'Profil', url: '/ucet/profil', icon: <PersonIcon /> },
 ];
 
 const ADMIN_ITEMS = [
-    {title: 'Uživatelé', url: 'uzivatele'},
-    {title: 'Všechny závody', url: 'vsechny-zavody'},
-    {title: 'Nastavení', url: 'nastaveni'},
+    { title: 'Uživatelé', url: '/ucet/uzivatele', icon: <PeopleIcon /> },
+    { title: 'Všechny závody', url: '/ucet/vsechny-zavody', icon: <CalendarTodayIcon /> },
+    { title: 'Nastavení', url: '/ucet/nastaveni', icon: <SettingsIcon /> },
 ];
-const DashboardMenu = ({width, isToggled, isOpened, onOpenMenu}) => {
+const DashboardMenu = ({ width, isToggled, isOpened, onOpenMenu }) => {
     const navigate = useNavigate();
-
+    const location = useLocation();
     return (
         <Drawer
             sx={{
                 width: width,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: { width: width, boxSizing: 'border-box' },
+                [`& .MuiDrawer-paper`]: { width: width, boxSizing: 'border-box' }
             }}
-            variant={isToggled ? "temporary" : "persistent" }
+            variant={isToggled ? "temporary" : "persistent"}
             anchor="left"
             open={isOpened}
             onClose={onOpenMenu}
         >
             <Toolbar />
-            <Box sx={{ overflow: 'auto' }}>
-                <List>
-                    {RACE_ITEMS.map((item, index) => (
-                        <ListItem button key={item.title} onClick={() => navigate(item.url)}>
+            <Box sx={(theme) => ({ 
+                overflow: 'auto', 
+                height: '100%', 
+                backgroundColor: 
+                theme.palette.primary.main, 
+                color: 'white' })}>
+                <List sx={{mt:3}}>
+                    {MENU_ITEMS.map((item, index) => (
+                        <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{...listButtonStyle}}>
+                            <ListItemIcon sx={{ color: 'white' }} >{item.icon}</ListItemIcon>
                             <ListItemText primary={item.title} />
-                        </ListItem>
+                        </ListItemButton>
                     ))}
                 </List>
-                <Divider />
-                <List>
-                    {USER_ITEMS.map((item, index) => (
-                        <ListItem button key={item.title} onClick={() => navigate(item.url)}>
-                            <ListItemText primary={item.title} />
-                        </ListItem>
-                    ))}
-                </List> 
 
-                <Divider><Chip label="Administrace" icon={<AdminPanelSettingsIcon />} variant='outlined'/></Divider>                
+                <Divider><Chip label="Administrace" icon={<AdminPanelSettingsIcon />} variant='outlined' sx={{ color: 'white' }}/></Divider>
                 <List>
                     {ADMIN_ITEMS.map((item, index) => (
-                        <ListItem button key={item.title} onClick={() => navigate(item.url)}>
+                        <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{...listButtonStyle}}>
+                            <ListItemIcon  sx={{ color: 'white' }} >{item.icon}</ListItemIcon>
                             <ListItemText primary={item.title} />
-                        </ListItem>
+                        </ListItemButton>
                     ))}
                 </List>
             </Box>

@@ -1,3 +1,5 @@
+import { Button, Typography } from "@mui/material";
+import { Box } from "@mui/system";
 import { useMemo } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -7,38 +9,38 @@ const baseStyle = {
     flexDirection: 'column',
     alignItems: 'center',
     padding: '20px',
-    borderWidth: 2,
+    borderWidth: 1,
     borderRadius: 2,
     borderColor: '#313131',
     borderStyle: 'dashed',
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#ffffff',
     color: '#313131',
     outline: 'none',
-    transition: 'border .24s ease-in-out'
+    transition: 'border .24s ease-in-out',
+    marginTop: '8px'
 };
 
 const focusedStyle = {
     borderColor: '#313131',
     borderStyle: 'solid',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#f1f1f1',
 };
 
 const rejectStyle = {
     borderColor: '#ff1744'
 };
 
-const FileDropzone = ({children}) => {
+const FileDropzone = ({ children, formats }) => {
     const {
         getRootProps,
         getInputProps,
         isFocused,
         isDragAccept,
         isDragReject,
-    } = useDropzone({ onDrop: (file) => {console.log(file)} });
+    } = useDropzone({ onDrop: (file) => { console.log(file) } });
 
     const style = useMemo(() => ({
         ...baseStyle,
-        ...(isFocused ? focusedStyle : {}),
         ...(isDragAccept ? focusedStyle : {}),
         ...(isDragReject ? rejectStyle : {}),
     }), [
@@ -51,7 +53,18 @@ const FileDropzone = ({children}) => {
         <section className="container">
             <div {...getRootProps({ style })}>
                 <input {...getInputProps()} />
-                <p>{children}</p>
+                <Box sx={{display:'flex', flexDirection: 'column', justifyContent: 'center', alignContent: 'center'}}>
+                    <Typography variant="subtitle1">
+                        Přesuňte zde soubor z počítače
+                    </Typography>
+                    <Typography variant="caption" align="center">
+                        nebo
+                    </Typography>
+                    <Button variant="outlined" color="secondary">Vybrat soubor</Button>
+                    <Typography variant="caption" align="center" mt={1}>
+                      Povolené formáty:  {formats}
+                    </Typography>
+                </Box>
             </div>
         </section>
     );

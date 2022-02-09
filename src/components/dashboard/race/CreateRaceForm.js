@@ -5,8 +5,9 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
 import { useState } from "react";
 import { DatePicker } from "@mui/lab";
+import ContentBox from "../../UI/ContentBox";
 
-const CreateRaceForm = ({isCreate, onCreate, raceData}) => {
+const CreateRaceForm = ({ isCreate, onCreate, raceData }) => {
     const [raceTypeMessage, setRaceTypeMessage] = useState('');
     const [raceDate, setRaceDate] = useState(null);
 
@@ -25,17 +26,8 @@ const CreateRaceForm = ({isCreate, onCreate, raceData}) => {
     }
 
     return (
-        <>
-            <Box component="form"
-                sx={{
-                    width: "auto",
-                    maxWidth: 1000,
-                    height: "auto",
-                    border: '1px dashed grey',
-                    p: 3 
-                }}
-                onSubmit={onCreate}
-            >
+        <ContentBox sx={{maxWidth: 1000}}>
+            <Box component="form" onSubmit={onCreate}>
                 <FormLabel id="race-type-radio-buttons-group">{isCreate ? "Vyberte typ závodu" : "Typ závodu"}</FormLabel>
                 <RadioGroup
                     row
@@ -66,7 +58,7 @@ const CreateRaceForm = ({isCreate, onCreate, raceData}) => {
                             label="Datum závodu"
                             openTo="day"
                             views={['year', 'month', 'day']}
-                            value={raceDate}                            
+                            value={raceDate}
                             onChange={(newValue) => {
                                 setRaceDate(newValue);
                             }}
@@ -80,7 +72,7 @@ const CreateRaceForm = ({isCreate, onCreate, raceData}) => {
                     </Grid>
                 </Grid>
             </Box>
-        </>
+        </ContentBox>
     );
 };
 

@@ -1,4 +1,4 @@
-import CreateRaceForm from "../../components/race/CreateRaceForm";
+import CreateRaceForm from "../../components/dashboard/race/CreateRaceForm";
 
 const CreateRace = () => {
     const handleCreateRace = (event) => {

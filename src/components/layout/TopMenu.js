@@ -45,7 +45,7 @@ const TopMenu = (props) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
             >
-                <MenuItem onClick={() => { navigate("/ucet") }}>Profil</MenuItem>
+                <MenuItem onClick={() => { navigate("/ucet") }}>Nástěnka</MenuItem>
                 <MenuItem onClick={() => { }}>Moje závody</MenuItem>
                 <MenuItem onClick={() => { }}>Odhlásit se</MenuItem>
             </Menu>

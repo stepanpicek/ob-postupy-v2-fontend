@@ -1,3 +1,4 @@
+import { Provider } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import MainLayout from "./components/layout/MainLayout";
@@ -21,6 +22,7 @@ import PrivateRaces from "./pages/race/PrivateRaces";
 import PublicRaces from "./pages/race/PublicRaces";
 import RaceDetail from "./pages/race/RaceDetail";
 import { CalibrationContextProvider } from "./store/calibration-context";
+import store from './store/index';
 
 const Router = () => {
     return (
@@ -32,9 +34,9 @@ const Router = () => {
                 <Route path="/zapomenute-heslo" element={<PasswordResetRequest />} />
                 <Route path="/reset-hesla" element={<PasswordReset />} />
                 <Route path="/reset-hesla-potvrzeni" element={<PasswordResetConfirm />} />
-                <Route path="/zavod/:raceId" element={<RaceDetail />} />
                 <Route path="*" element={<NotFound />} />
             </Route>
+            <Route path="/zavod/:raceId" element={<Provider store={store}><RaceDetail /></Provider>} />
             <Route path="/ucet" element={<PrivateRoute  role="User" element={<DashboardLayout />} />}>
                 <Route index element={<Dashboard />} />
                 <Route path="profil" element={<Profile />} />

@@ -1,16 +1,13 @@
-import { useContext } from "react";
-import { LayersControl, MapContainer, TileLayer, useMapEvents } from "react-leaflet";
-import CalibrationPoints from "./CalibrationPoints";
-import CalibrationContext from "../../../store/calibration-context";
-
-const MapForCalibration = () => {
-    const initialPosition = [50.0835494, 14.4341414];
-    const calibCtx = useContext(CalibrationContext);
+import { LayersControl, TileLayer } from "react-leaflet";
+const MapLayers = () => {
     return (
-        <MapContainer className='calibration-map' center={initialPosition} zoom={11}>
+        <>
             <LayersControl position="topright">
                 <LayersControl.BaseLayer checked name="Mapy.cz turistická">
                     <TileLayer url="https://mapserver.mapy.cz/turist-m/{z}-{x}-{y}" />
+                </LayersControl.BaseLayer>
+                <LayersControl.BaseLayer checked name="Mapy.cz základní">
+                    <TileLayer url="https://mapserver.mapy.cz/base-m/{z}-{x}-{y}" />
                 </LayersControl.BaseLayer>
                 <LayersControl.BaseLayer name="Mapy.cz satelitní">
                     <TileLayer url="https://mapserver.mapy.cz/ophoto-m/{z}-{x}-{y}" />
@@ -19,9 +16,8 @@ const MapForCalibration = () => {
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 </LayersControl.BaseLayer>
             </LayersControl>
-            <CalibrationPoints  calibrationPoints={calibCtx.realPoints} onSetCalibrationPoints={calibCtx.onAddRealPoint}/>
-        </MapContainer>
+        </>
     );
 }
 
-export default MapForCalibration;
+export default MapLayers;

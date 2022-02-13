@@ -64,7 +64,7 @@ const TopMenu = (props) => {
                         color="inherit"
                         edge="start"
                         onClick={props.onOpenMenu}
-                        sx={{ mr: 2, display: { sm: 'none' } }}
+                        sx={{ mr: 2, display: { sm: !props.isRaceDetail ? 'none' : 'block' } }}
                     >
                         <MenuIcon />
                     </IconButton>}

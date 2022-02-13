@@ -24,7 +24,7 @@ const CalibratedOMap = () => {
     return (
         <>
             {mapImgDimensions.width && mapImgDimensions.width > 0 &&
-                <MapContainer crs={CRS.Simple} center={[mapImgDimensions.height/2, mapImgDimensions.width/2]} zoom={-3} minZoom={-5} maxZoom={5} maxBounds={[[-50, -50], [mapImgDimensions.height + 50, mapImgDimensions.width + 50]]}>
+                <MapContainer className='calibration-map' crs={CRS.Simple} center={[mapImgDimensions.height/2, mapImgDimensions.width/2]} zoom={-3} minZoom={-5} maxZoom={5} maxBounds={[[-50, -50], [mapImgDimensions.height + 50, mapImgDimensions.width + 50]]}>
                     <ImageOverlay url="https://obpostupy.orientacnisporty.cz/maps/image?raceKey=3ee33f30c529443eafd557087e8c3c34" bounds={[[0, 0], [mapImgDimensions.height, mapImgDimensions.width]]} />
                     <CalibrationPoints  calibrationPoints={calibCtx.pixelPoints} onSetCalibrationPoints={calibCtx.onAddPixelPoint}/>
                 </MapContainer>}

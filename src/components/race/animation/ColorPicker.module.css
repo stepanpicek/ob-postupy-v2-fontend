@@ -1,0 +1,20 @@
+.swatch{
+    padding: 7px;
+    background: #fff;
+    display: inline-block;
+    cursor: pointer;
+    border: 1px solid #fff;
+}
+
+.popover{
+    position: fixed;
+    z-index: 1000;
+}
+
+.cover{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}

@@ -28,6 +28,18 @@
   color: #61dafb;
 }
 
+.MuiTabs-indicator{
+  background-color: #2e7d32 !important;
+}
+
+.MuiTab-root{
+  color: white !important;
+}
+
+.MuiTab-root.Mui-selected{
+  color: #2e7d32 !important;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

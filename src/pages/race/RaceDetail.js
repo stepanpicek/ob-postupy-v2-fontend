@@ -9,13 +9,13 @@ import MainRaceMenu from "../../components/race/MainRaceMenu";
 import AnimationControlPanel from "../../components/race/AnimationControlPanel";
 import MapControl from "../../components/race/MapControl";
 import useHttp from "../../hooks/use-http";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { raceActions } from "../../store/race";
 
 const RaceDetailStyle = {
     main: {
         flexShrink: 1,
-        position: 'relative',        
+        position: 'relative',
         width: '100%',
         height: '100%'
     },
@@ -32,28 +32,29 @@ const RaceDetailStyle = {
     }
 };
 
-const menuWidth = 250;
+const menuWidth = 400;
 
 const RaceDetail = () => {
     const [isOpened, setIsOpened] = useState(true);
-    const theme = useTheme();    
+    const theme = useTheme();
     const sm = theme.breakpoints.values.sm;
     const { width } = useWindowDimensions();
     const initialPosition = [50.0835494, 14.4341414];
-    const { isLoading, error, sendRequest} = useHttp();
+    const { isLoading, error, sendRequest } = useHttp();
     const dispatch = useDispatch();
+    const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
+
     const openMenuHandler = () => {
         setIsOpened(state => !state);
     }
 
     let { raceId } = useParams();
-    
+
     useEffect(() => {
-        sendRequest({ url: `https://localhost:44302/races/get?key=${raceId}`},
-        (data) => {
-            console.log(data);
-            dispatch(raceActions.addId({id:data.key}));
-        });
+        sendRequest({ url: `https://localhost:44302/races/get?key=${raceId}` },
+            (data) => {
+                dispatch(raceActions.addId({ id: data.key }));
+            });
     }, [raceId])
 
     return (
@@ -61,7 +62,7 @@ const RaceDetail = () => {
             <Box sx={{ display: 'flex', flex: 1 }}>
                 <TopMenu isToggled={true} isRaceDetail={true} onOpenMenu={openMenuHandler} />
                 <MainRaceMenu width={menuWidth} isSmall={width <= sm} isOpened={isOpened} onOpenMenu={openMenuHandler} />
-                <Box sx={{flexShrink: 1, display: 'flex', flexDirection: 'column', width: '100%', height:'100%',marginLeft: !isOpened && width > sm ? `-${menuWidth}px` : 0 }}>
+                <Box sx={{ flexShrink: 1, display: 'flex', flexDirection: 'column', width: '100%', height: '100%', marginLeft: !isOpened && width > sm ? `-${menuWidth}px` : 0 }}>
                     <div style={RaceDetailStyle.main}>
                         <Box style={RaceDetailStyle.map}>
                             <MapContainer style={RaceDetailStyle.mapContainer} center={initialPosition} zoom={11}>
@@ -70,9 +71,10 @@ const RaceDetail = () => {
                             </MapContainer>
                         </Box>
                     </div>
-                    { true && 
+                    <div style={{ display: isAnimationOn ? 'block' : 'none' }} >
                         <AnimationControlPanel />
-                    }
+                    </div>
+
                 </Box>
 
             </Box>

@@ -1,18 +1,13 @@
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-
 const TabPanel = (props) =>  {
   const { children, value, index, ...other } = props;
 
   return (
     <div
-      role="tabpanel"
-      hidden={value !== index}
       id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
       {...other}
+      style={{ display: value === index? 'block': 'none', width: '100%'}}
     >
-      {value === index && children}
+      {children}
     </div>
   );
 }

@@ -1,36 +1,46 @@
 import { useEffect, useState } from "react";
-import { useMap } from "react-leaflet";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
 import Finish from "./control/Finish";
 import Start from "./control/Start";
 import Control from "./control/Control";
 import Line from "./control/Line";
 import { angle } from "../../../services/geo";
+import { raceActions } from "../../../store/race";
 
 const Course = () => {
     const { isLoading, error, sendRequest } = useHttp();
-    const [course, setCourse] = useState(null);
+    const course = useSelector((state) => state.race.course);
     const courseId = useSelector((state) => state.race.courseId);
     const mapScale = useSelector((state) => state.race.mapScale);
+    const [courseData, setCourseData] = useState(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (!courseId) return;
         if(courseId < 0){
-            setCourse(null);
+            dispatch(raceActions.setCourse(null));
             return;
         }
         sendRequest({ url: `https://localhost:44302/courses/get?id=${courseId}` }, (data) => {
-            setCourse(data);
+            //setCourse(data);
+            dispatch(raceActions.setCourse(data));
         });
     }, [courseId]);
 
+    useEffect(()=>{
+        drawCourse();
+    }, [course])
+
     const drawCourse = () => {
-        if (!course || !course.courseControl) return <></>;
+        if (!course || !course.courseControl){
+            setCourseData(null);
+            return;
+        }
         let ratio = mapScale / 15000;
         let courseData = [];
-        let controls = course.courseControl;
-        controls.sort((a, b) => a.order - b.order);
+        let controls = course.courseControl.slice();
+        controls.sort((a, b) => a.order - b.order)
         controls.forEach((control, index) => {
             let center = [control.control.coordinates.item1, control.control.coordinates.item2];
             let radius = Math.ceil(40 * ratio);
@@ -55,8 +65,7 @@ const Course = () => {
                 courseData.push(<Line key={`${control.controlId}-line`} firstCenter={center} secondCenter={secondCenter} firstRadius={radius} secondRadius={radius} />);
             }
         });
-
-        return courseData;
+        setCourseData(courseData);
     }
 
     const getStart = (center, controls, index, control, radius) => {
@@ -84,7 +93,7 @@ const Course = () => {
 
     return (
         <>
-            {drawCourse()}
+            {courseData}
         </>);
 }
 

@@ -9,35 +9,39 @@ import CompetitorsControl from "./CompetitorsControl";
 const CategoriesControl = () => {
     const dispatch = useDispatch();
     const raceId = useSelector((state) => state.race.raceId);
-    const [categories, setCategories] = useState([]);
-    const [selectedCategory, setSelectedCategory] = useState(-1);
+    const categories = useSelector((state) => state.race.categories);
+    const selectedCategory = useSelector((state) => state.race.categoryId);
     const { isLoading, error, sendRequest } = useHttp();
 
     useEffect(() => {
-        if(!raceId) return;
+        if (!raceId) return;
         sendRequest({ url: `https://localhost:44302/races/categories?key=${raceId}` }, (data) => {
-            setCategories(data);
+            dispatch(raceActions.setCategories(data));
         });
     }, [raceId]);
 
     const handleCategoryChange = (event) => {
         let id = event.target.value;
-        setSelectedCategory(id);
         let category = categories.find(c => c.id == id);
         let courseId = -1;
-        if(category){
+        if (category) {
             courseId = category.courseId;
         }
         dispatch(raceActions.changeCategory(id));
         dispatch(raceActions.changeCourse(courseId));
     }
 
-    return(
-        <Box>
+    return (
+        <Box sx={{ width: '100%', p: 1 }}>
             <Form.Select size="sm" onChange={handleCategoryChange} value={selectedCategory}>
                 <option key={-1} value={-1}>Vyberte kategorii</option>
                 {categories.map((category, index) => <option key={category.id} value={category.id}>{category.name}</option>)}
             </Form.Select>
+            {selectedCategory >= 0 &&
+                <Box sx={{ display: 'flex', width: '100%'}}>
+                    Kategorie: <b>{categories.find(c => c.id == selectedCategory).name}</b>
+
+                </Box>}
             <CompetitorsControl />
         </Box>
     );

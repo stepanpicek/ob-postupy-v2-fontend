@@ -56,12 +56,6 @@ const OMap = () => {
 
     }, [corners, image, transparency]);
 
-    useEffect(() => {
-        return function cleanup() {
-            if (imageLayer) mapLayer.removeLayer(imageLayer);
-        }
-    })
-
     return (<></>);
 }
 

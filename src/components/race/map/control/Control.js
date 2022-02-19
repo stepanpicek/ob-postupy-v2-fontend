@@ -2,8 +2,9 @@ import { Circle, Tooltip, useMap, useMapEvent } from "react-leaflet";
 import { metersToPixels, position } from "../../../../services/geo";
 import { useEffect, useState } from "react";
 import './Control.css';
+import classes from '../DrawPath.module.css';
 
-const Control = ({ center, radius, label, isDrawing, eventHandlers }) => {
+const Control = ({ center, radius, label, isDrawing, opacity, eventHandlers }) => {
     const map = useMap();
     const [labelMarker, setLabelMarker] = useState(null);    
     const [zoomLevel, setZoomLevel] = useState(5);
@@ -43,10 +44,12 @@ const Control = ({ center, radius, label, isDrawing, eventHandlers }) => {
     }
 
     useEffect(() => {
+        if(isDrawing) return;
         addLabel();
     }, [zoomLevel]);
 
     useEffect(() => {
+        if(isDrawing) return;
         addLabel();
     }, [center]);
 
@@ -68,9 +71,9 @@ const Control = ({ center, radius, label, isDrawing, eventHandlers }) => {
                     color: '#0388fc',
                     weight: 15,
                     opacity: 0.8,
-                    fillOpacity: 0.2,
+                    fillOpacity: opacity,
                     interactive: false
-                }} radius={radius} eventHandlers={eventHandlers} />
+                }} radius={radius} eventHandlers={eventHandlers} className={classes.drawCursor} />
             }
         </>
     );

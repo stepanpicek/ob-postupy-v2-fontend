@@ -1,6 +1,61 @@
+import { useEffect, useMemo, useState } from "react";
+import Table from "../components/UI/Table";
+import useHttp from "../hooks/use-http";
+
 const Home = () => {
+    const { isLoading, error, sendRequest } = useHttp();
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        sendRequest({ url: `https://localhost:44302/races/public` }, (data) => {
+            setData(data.map((item) => {
+                return ({
+                    ID: item.id,
+                    date: new Date(item.startTime),
+                    name: item.name,
+                    organizer: item.organizer
+                });
+            }));
+            
+            setData((data) => [...data, ...data, ...data, ...data])
+        });
+    }, []);
+
+    const columns = useMemo(
+        () => [
+            {
+                Header: ' ',
+                columns: [
+                    {
+                        Header: 'Datum',
+                        accessor: 'date',
+                        Cell: ({ cell: { value } }) => value.toLocaleDateString("cs-CZ"),
+                        sortType: "datetime",
+                        filter: (rows, id, filterValue) => {
+                            if(filterValue.length == 0) return rows;
+                            return rows.filter((row) => filterValue.includes(row.values.date.getFullYear()));
+                        }
+                    },
+                    {
+                        Header: 'Název',
+                        accessor: 'name',
+                    },
+                    {
+                        Header: 'Oddíl',
+                        accessor: 'organizer',
+                    },
+                ],
+            }
+        ],
+        []
+    )
+
     return (
-        <h1>Home page</h1>
+        <div className="d-flex flex-md-row flex-column-reverse" >
+            <div className="mx-1" style={{ width: '100%', background: 'rgba(255,255,255,0.6)', border: '1px solid'}}>
+                <Table name="Veřejné závody" columns={columns} data={data} yearFiltering searching initialState={{sortBy:[{id: 'date', desc: true}], pageSize: 10}} />
+            </div>
+            <div className="mx-1" style={{ height: '300px', width: '100%' }}></div>
+        </div>
     );
 };
 

@@ -1,6 +1,7 @@
 import { Circle } from "react-leaflet";
+import classes from '../DrawPath.module.css';
 
-const Finish = ({ center, radius, isDrawing, eventHandlers }) => {
+const Finish = ({ center, radius, isDrawing, opacity, eventHandlers }) => {
     return (
         <>
             {!isDrawing &&
@@ -26,9 +27,9 @@ const Finish = ({ center, radius, isDrawing, eventHandlers }) => {
                         color: '#0388fc',
                         weight: 15,
                         opacity: 0.8,
-                        fillOpacity: 0.2,
+                        fillOpacity: opacity,
                         interactive: false,
-                    }} radius={radius} eventHandlers={eventHandlers}/>
+                    }} radius={radius} eventHandlers={eventHandlers} className={classes.drawCursor} />
                 </>
             }
 

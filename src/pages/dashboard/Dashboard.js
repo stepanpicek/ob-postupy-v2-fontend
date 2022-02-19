@@ -3,20 +3,44 @@ import { width } from "@mui/system";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import ContentBox from "../../components/UI/ContentBox";
 import CloseIcon from '@mui/icons-material/Close';
+import Table from "../../components/UI/Table";
 
 const rows = [
-    { id: 1, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 2, raceDate: Date.now(), name: 'MČR Krátká trať' },
-    { id: 3, raceDate: Date.now(), name: 'MČR Klasická trať' },
+    { id: 1, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 2, date: new Date(), name: 'MČR Krátká trať' },
+    { id: 3, date: new Date(), name: 'MČR Klasická trať' },
     
-    { id: 4, raceDate: Date.now(), name: 'MČR Klasická trať' },
+    { id: 4, date: new Date(), name: 'MČR Klasická trať' },
     
-    { id: 5, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 6, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 7, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 8, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 9, raceDate: Date.now(), name: 'MČR Klasická trať' },
-    { id: 10, raceDate: Date.now(), name: 'MČR Klasická trať' },
+    { id: 5, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 6, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 7, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 8, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 9, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 10, date: new Date(), name: 'MČR Klasická trať' },
+    { id: 11, date: new Date(), name: 'MČR Klasická trať' },
+];
+
+const myRacesDef = [
+    {
+        Header: ' ',
+        columns: [
+            {
+                Header: 'Datum',
+                accessor: 'date',
+                Cell: ({ cell: { value } }) => value.toLocaleDateString("cs-CZ"),
+                sortType: "datetime",
+                filter: (rows, id, filterValue) => {
+                    if(filterValue.length == 0) return rows;
+                    return rows.filter((row) => filterValue.includes(row.values.date.getFullYear()));
+                }
+            },
+            {
+                Header: 'Název',
+                accessor: 'name',
+            }
+        ],
+    }
 ];
 
 const columns = [
@@ -45,21 +69,7 @@ const Dashboard = () => {
                         <Typography variant="h6" align="center">
                             Moje poslední závody
                         </Typography>
-                        <div style={{ display: 'flex', height: '500px', width: '100%'}}>
-                            <div style={{ flexGrow: 1 }}>
-                                <DataGrid
-                                    rows={rows}
-                                    columns={columns}
-                                    pagination
-                                    pageSize={7}
-                                    rowsPerPageOptions={[7]}
-                                    initialState={{ pinnedColumns: { right: ['actions'] } }}
-                                    sx={{
-                                        border: 'none',
-                                        width: '100%'
-                                    }} />
-                            </div>
-                        </div>
+                        <Table columns={myRacesDef} data={rows} />
                     </ContentBox>
                 </Grid>
                 <Grid item xs={12} md={8}>

@@ -12,9 +12,13 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import classes from './Competitor.module.css';
 import { manualPathActions } from "../../../store/manual-path";
 
+const colorArray = [
+    "#FF0000", "#0000FF", "#FFFF00", "#008000", "#800080", "#008080", "#D2691E", "#A9A9A9", "#EE82EE", "#00FA9A"
+];
 
 const CompetitorControl = ({ competitor }) => {
     const dispatch = useDispatch();
+    const competitorsCount = useSelector((state) => state.animation.competitorsColorNumber);
     const [isPlayed, setIsPlayed] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [color, setColor] = useState('#ff0000');
@@ -22,14 +26,16 @@ const CompetitorControl = ({ competitor }) => {
 
     const handleUserPlay = () => {
         sendRequest({ url: `https://localhost:44302/paths/result?id=${competitor.id}` }, (data) => {
+            let playerColor = colorArray[competitorsCount%(colorArray.length-1)];
             dispatch(animationActions.addCompetitor(
                 {
                     id: competitor.id,
                     offset: 0,
-                    color: color,
+                    color: playerColor,
                     name: `${competitor.person.firstName} ${competitor.person.lastName}`,
                     locations: data.locations.map((location) => [location.position.item1, location.position.item2])
                 }));
+            setColor(playerColor);
             setIsPlayed((state) => !state);
         });
     }

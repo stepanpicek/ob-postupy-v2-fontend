@@ -1,7 +1,8 @@
 import { Polygon, useMap } from "react-leaflet";
 import { distance, interpolation, project, rotation, degreesToRadians, unproject } from "../../../../services/geo";
+import classes from '../DrawPath.module.css';
 
-const Start = ({ center, radius, nextControl, isDrawing, eventHandlers }) => {
+const Start = ({ center, radius, nextControl, isDrawing, opacity, eventHandlers }) => {
     const map = useMap();
 
     const getStartCorners = () => {
@@ -29,9 +30,9 @@ const Start = ({ center, radius, nextControl, isDrawing, eventHandlers }) => {
                     color: '#0388fc',
                     weight: 15,
                     opacity:0.8,
-                    fillOpacity: 0.2,
+                    fillOpacity: opacity,
                     interactive: false,
-                }}  eventHandlers={eventHandlers} />
+                }}  eventHandlers={eventHandlers} className={classes.drawCursor} />
             }
         </>
     );

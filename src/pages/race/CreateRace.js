@@ -3,7 +3,6 @@ import CreateRaceForm from "../../components/dashboard/race/CreateRaceForm";
 const CreateRace = () => {
     const handleCreateRace = (event) => {
         event.preventDefault();
-        console.log(event);
     }   
 
     return (

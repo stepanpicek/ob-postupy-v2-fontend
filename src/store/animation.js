@@ -1,18 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { distance } from '../services/geo';
 
-const initialAnimationState = {    
+const initialAnimationState = {
     isPlayed: false,
     competitors: [],
+    competitorsColorNumber: 0,
     snakeSize: 60,
     snakeWidth: 8,
     snakeRadius: 8,
     speed: 10,
     minIndex: 0,
-    maxIndex: 5000,
+    maxIndex: 0,
     actualIndex: 0,
     isSliding: false,
-    isAnimationOn: false
+    isAnimationOn: false,
+    isFromStart: true,
+    startPosition: null
 };
 
 const animationSlice = createSlice({
@@ -24,9 +27,29 @@ const animationSlice = createSlice({
                 state.competitors = state.competitors.filter(c => c.id != action.payload.id);
             }
             else {
-                state.competitors.push(action.payload);
+                let competitor = action.payload;
+                if (!state.isFromStart) {
+                    let nearest = findNearestPosition(competitor.locations, state.startPosition);
+                    competitor.offset = nearest;
+                    let maximum = competitor.locations.length - nearest + Number(state.snakeSize);
+                    state.minIndex = -nearest < state.minIndex ? -nearest : state.minIndex;
+                    state.maxIndex = maximum > state.maxIndex ? maximum : state.maxIndex;
+                }
+
+                state.competitors.push(competitor);
+                if (state.isFromStart) {
+                    let maxIndex = 0;
+                    state.competitors.forEach((element) => {
+                        let maximum = element.locations.length + Number(state.snakeSize);
+                        maxIndex = maximum > maxIndex ? maximum : maxIndex;
+                    });
+                    state.minIndex = 0;
+                    state.maxIndex = maxIndex;
+                }
+                
             }
             state.isAnimationOn = state.competitors.length > 0;
+            state.competitorsColorNumber++;
             if (!state.isAnimationOn) {
                 state.actualIndex = initialAnimationState.actualIndex;
                 state.isPlayed = initialAnimationState.isPlayed;
@@ -57,19 +80,21 @@ const animationSlice = createSlice({
         changeSpeed(state, action) {
             state.speed = action.payload.speed;
         },
-        startFrom(state, action) {   
+        startFrom(state, action) {
             let minIndex = 0;
-            let maxIndex = 0;         
+            let maxIndex = 0;
             state.competitors.forEach((element) => {
                 let nearest = findNearestPosition(element.locations, action.payload);
                 let maximum = element.locations.length - nearest + Number(state.snakeSize);
                 element.offset = nearest;
-                minIndex = nearest > minIndex ? nearest : minIndex;                
+                minIndex = nearest > minIndex ? nearest : minIndex;
                 maxIndex = maximum > maxIndex ? maximum : maxIndex;
             });
             state.actualIndex = 0;
             state.minIndex = -minIndex;
             state.maxIndex = maxIndex;
+            state.isFromStart = false;
+            state.startPosition = action.payload;
         },
         startFromStart(state) {
             let maxIndex = 0;
@@ -81,6 +106,7 @@ const animationSlice = createSlice({
             state.actualIndex = 0;
             state.minIndex = 0;
             state.maxIndex = maxIndex;
+            state.isFromStart = true;
         },
         updatePosition(state, action) {
             state.isSliding = action.payload.isSliding;
@@ -108,6 +134,9 @@ const animationSlice = createSlice({
             state.isAnimationOn = initialAnimationState.isAnimationOn;
             state.minIndex = initialAnimationState.minIndex;
             state.maxIndex = initialAnimationState.maxIndex;
+            state.isFromStart = initialAnimationState.isFromStart;
+            state.startPosition = initialAnimationState.startPosition;
+            state.competitorsColorNumber = initialAnimationState.competitorsColorNumber;
         }
     }
 });

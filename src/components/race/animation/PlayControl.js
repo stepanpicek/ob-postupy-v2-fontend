@@ -1,4 +1,4 @@
-import { IconButton } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { animationActions } from "../../../store/animation";
@@ -11,6 +11,7 @@ import FastForwardIcon from '@mui/icons-material/FastForward';
 const PlayControl = () => {
     const isPlayed = useSelector((state) => state.animation.isPlayed);
     const speed = useSelector((state) => state.animation.speed);
+    const isFromStart = useSelector((state) => state.animation.isFromStart);
     const dispatch = useDispatch();
     const [intervalId, setIntervalId] = useState();
 
@@ -47,8 +48,13 @@ const PlayControl = () => {
         dispatch(animationActions.updateForwardPosition());
     }
 
+    const handleStartFromStart = () => {
+        dispatch(animationActions.startFromStart());
+    }
+
     return (
-        <>
+        <>  
+            {!isFromStart && <Button size="small" style={{color: 'white'}} onClick={handleStartFromStart}>Začít od startu</Button>}
             <IconButton onClick={handleBackButton}><FastRewindIcon htmlColor="white" /></IconButton>
             <IconButton onClick={handlePlayButton}>
                 {!isPlayed && <PlayArrowIcon htmlColor="white" />}

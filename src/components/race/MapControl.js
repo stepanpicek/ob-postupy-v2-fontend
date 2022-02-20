@@ -4,6 +4,7 @@ import MapLayers from "./map/MapLayers";
 import OMap from "./map/Omap";
 import SnakeOffset from "./map/SnakeOffset";
 import SnakesAnimation from "./map/SnakesAnimation";
+import UploadPath from "./map/UploadPath";
 
 const MapControl = () => {
     return (
@@ -14,6 +15,7 @@ const MapControl = () => {
             <SnakesAnimation />
             <DrawPath />
             <SnakeOffset />
+            <UploadPath />
         </>
     );
 }

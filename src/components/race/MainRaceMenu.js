@@ -11,10 +11,12 @@ import SettingsControl from './control/SettingsControl';
 import TabPanel from '../UI/TabPanel';
 import { useSelector } from 'react-redux';
 import ManualPathControl from './control/ManualPathControl';
+import UploadPathControl from './control/UploadPathControl';
 
 const MainRaceMenu = ({ width, isSmall, isOpened, onOpenMenu }) => {
     const [value, setValue] = useState(0);
     const isCalibration = useSelector((state) => state.manualPath.isOpened);
+    const isUploadPath = useSelector((state) => state.uploadPath.isUploadPathOpened);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -41,10 +43,13 @@ const MainRaceMenu = ({ width, isSmall, isOpened, onOpenMenu }) => {
                     theme.palette.primary.main,
                 color: 'white'
             })}>
+                <div style={{ display: !isUploadPath ? 'none' : 'block' }}>
+                    <UploadPathControl />
+                </div>
                 <div style={{ display: !isCalibration ? 'none' : 'block' }}>
                     <ManualPathControl />
                 </div>
-                {!isCalibration &&
+                {!isCalibration && !isUploadPath &&
                     <>
                         <Tabs value={value} onChange={handleChange} variant="fullWidth" textColor="secondary" >
                             <Tab icon={<DirectionsRunIcon />} label="Závodníci" />

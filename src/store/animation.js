@@ -4,7 +4,7 @@ import { distance } from '../services/geo';
 const initialAnimationState = {
     isPlayed: false,
     competitors: [],
-    competitorsColorNumber: 0,
+    competitorsColorNumber: 0,    
     snakeSize: 60,
     snakeWidth: 8,
     snakeRadius: 8,
@@ -15,7 +15,8 @@ const initialAnimationState = {
     isSliding: false,
     isAnimationOn: false,
     isFromStart: true,
-    startPosition: null
+    startPosition: null,
+    playAllTrigger: false
 };
 
 const animationSlice = createSlice({
@@ -56,6 +57,9 @@ const animationSlice = createSlice({
                 state.isSliding = initialAnimationState.isSliding;
             }
         },
+        changeColorNumber(state){
+            state.competitorsColorNumber++;
+        },
         removeCompetitor(state, action) {
             state.competitors = state.competitors.filter(c => c.id != action.payload);
         },
@@ -78,7 +82,7 @@ const animationSlice = createSlice({
             state.isPlayed = action.payload ?? !state.isPlayed;
         },
         changeSpeed(state, action) {
-            state.speed = action.payload.speed;
+            state.speed = action.payload;
         },
         startFrom(state, action) {
             let minIndex = 0;
@@ -111,6 +115,9 @@ const animationSlice = createSlice({
         updatePosition(state, action) {
             state.isSliding = action.payload.isSliding;
             state.actualIndex = action.payload.id ?? Number(state.actualIndex) + 1;
+            if(state.actualIndex >= state.maxIndex){
+                state.isPlayed = false;
+            }
         },
         updateBackPosition(state) {
             let index = Number(state.actualIndex) - 30;
@@ -137,6 +144,9 @@ const animationSlice = createSlice({
             state.isFromStart = initialAnimationState.isFromStart;
             state.startPosition = initialAnimationState.startPosition;
             state.competitorsColorNumber = initialAnimationState.competitorsColorNumber;
+        },
+        changeIsAnimationOn(state){
+            state.playAllTrigger = !state.playAllTrigger
         }
     }
 });

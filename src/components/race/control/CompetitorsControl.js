@@ -24,7 +24,7 @@ const CompetitorsControl = () => {
         sendRequest({ url: `https://localhost:44302/results/category?id=${categoryId}` }, (data) => {
             setCompetitors(data);
         });
-    }, [categoryId]);    
+    }, [categoryId]);
 
     return (
         <Box sx={{width: '100%'}}>

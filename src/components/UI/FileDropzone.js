@@ -30,14 +30,14 @@ const rejectStyle = {
     borderColor: '#ff1744'
 };
 
-const FileDropzone = ({ children, formats }) => {
+const FileDropzone = ({ children, formats, onDrop }) => {
     const {
         getRootProps,
         getInputProps,
         isFocused,
         isDragAccept,
         isDragReject,
-    } = useDropzone({ onDrop: (file) => { console.log(file) } });
+    } = useDropzone({ onDrop: (file) => {if(onDrop) onDrop(file); } });
 
     const style = useMemo(() => ({
         ...baseStyle,

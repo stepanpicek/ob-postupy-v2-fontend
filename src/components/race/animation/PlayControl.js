@@ -16,20 +16,22 @@ const PlayControl = () => {
     const [intervalId, setIntervalId] = useState();
 
     useEffect(() => {
+        if (intervalId) {
+            clearInterval(intervalId);
+            setIntervalId(0);
+        }
+
         if (!isPlayed) {
-            if (intervalId) {
-                clearInterval(intervalId);
-                setIntervalId(0);
-            }
             return;
         }
+
         const newIntervalId = setInterval(() => {
             dispatch(animationActions.updatePosition({ isSliding: false }));
         }, 1000 / speed);
 
         setIntervalId(newIntervalId);
 
-    }, [isPlayed]);
+    }, [isPlayed, speed]);
 
     const handlePlayButton = () => {
         dispatch(animationActions.changeIsPlayed(!isPlayed));
@@ -53,8 +55,8 @@ const PlayControl = () => {
     }
 
     return (
-        <>  
-            {!isFromStart && <Button size="small" style={{color: 'white'}} onClick={handleStartFromStart}>Začít od startu</Button>}
+        <>
+            {!isFromStart && <Button size="small" style={{ color: 'white' }} onClick={handleStartFromStart}>Začít od startu</Button>}
             <IconButton onClick={handleBackButton}><FastRewindIcon htmlColor="white" /></IconButton>
             <IconButton onClick={handlePlayButton}>
                 {!isPlayed && <PlayArrowIcon htmlColor="white" />}

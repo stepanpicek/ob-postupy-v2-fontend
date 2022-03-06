@@ -13,18 +13,32 @@ const useHttp = () => {
         headers: requestConfig.headers ? requestConfig.headers : {},
         body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       });
-
+      
       if (!response.ok) {
         throw new Error('Request failed!');
       }
 
-      const data = requestConfig.responseType === 'blob' ? await response.blob():await response.json();
+      let data;
+      switch (requestConfig.responseType) {
+        case 'blob':
+          data = await response.blob();
+          break;
+        case 'text':
+          data = await response.text();
+          break;
+        case 'json':
+          data = await response.json();
+          break;
+        default: data = await response.json();
+      }
       applyData(data);
-      
+
     } catch (err) {
-      setError(err.message || 'Something went wrong!');
+      throw new Error('Request failed!');
     }
-    setIsLoading(false);
+    finally{
+      setIsLoading(false);
+    }
   }, []);
 
   return {

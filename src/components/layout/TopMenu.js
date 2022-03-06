@@ -12,9 +12,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from "react";
 import { NavLink, useNavigate } from 'react-router-dom';
 import classes from './TopMenu.module.css';
+import useAuth from '../../hooks/use-auth';
 
 const TopMenu = (props) => {
-    const auth = true;
+    const auth = useAuth();
     const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
 
@@ -47,7 +48,7 @@ const TopMenu = (props) => {
             >
                 <MenuItem onClick={() => { navigate("/ucet") }}>Nástěnka</MenuItem>
                 <MenuItem onClick={() => { }}>Moje závody</MenuItem>
-                <MenuItem onClick={() => { }}>Odhlásit se</MenuItem>
+                <MenuItem onClick={() => { auth.logout(); navigate("/"); }}>Odhlásit se</MenuItem>
             </Menu>
         </>;
 
@@ -71,8 +72,8 @@ const TopMenu = (props) => {
                 <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                     <NavLink className={classes.topLink} to="/" >OB Postupy</NavLink>
                 </Typography>
-                {auth && AuthMenu}
-                {!auth && NonAuthMenu}
+                {auth.isLoggedIn && AuthMenu}
+                {!auth.isLoggedIn && NonAuthMenu}
                 <Button color="inherit" startIcon={<InfoIcon />}>Info</Button>
             </Toolbar>
         </AppBar>

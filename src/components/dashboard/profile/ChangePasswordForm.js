@@ -1,17 +1,37 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { useRef } from 'react';
+import useAuth from '../../../hooks/use-auth';
+import useHttp from '../../../hooks/use-http';
 
 const ChangePasswordForm = () => {    
-    const passwordOld = useRef();
-    const password = useRef();
-    const passwordCheck = useRef();
+    const [passwordOld, setPasswordOld] = useState("");
+    const [password, setPassword] = useState("");
+    const [passwordCheck, setPasswordCheck] = useState("");
+    const auth = useAuth();
+    const { isLoading, error, sendRequest } = useHttp();
 
     const handleChangePasswordSubmit = (event) => {
         event.preventDefault();
+        
+        let inputData = {
+            oldPassword: passwordOld,
+            newPassword: password
+        };
+
+        sendRequest({
+            url: 'https://localhost:5001/Authenticate/password',
+            method: 'POST',
+            body: inputData,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
+        })
+        .then(() => {            
+            setPasswordOld("");
+            setPassword("");
+            setPasswordCheck("");
+            auth.logout();
+        });
     };
 
     return (
@@ -24,9 +44,9 @@ const ChangePasswordForm = () => {
                 label="Staré heslo"
                 name="oldPassword"
                 autoComplete="password-old"
-                inputRef={passwordOld}
+                value={passwordOld}
+                onChange = {(input) => {setPasswordOld(input.target.value)}}
                 type="password"
-                autoFocus
             />
             <TextField
                 margin="normal"
@@ -36,9 +56,9 @@ const ChangePasswordForm = () => {
                 label="Nové heslo"
                 name="password"
                 autoComplete="password-new"
-                inputRef={password}
+                value={password}
+                onChange = {(input) => {setPassword(input.target.value)}}
                 type="password"
-                autoFocus
             />
             <TextField
                 margin="normal"
@@ -48,9 +68,9 @@ const ChangePasswordForm = () => {
                 label="Nové heslo pro ověření"
                 name="password-check"
                 autoComplete="password-new"
-                inputRef={passwordCheck}
+                value={passwordCheck}
+                onChange = {(input) => {setPasswordCheck(input.target.value)}}
                 type="password"
-                autoFocus
             />
             <Button
                 type="submit"

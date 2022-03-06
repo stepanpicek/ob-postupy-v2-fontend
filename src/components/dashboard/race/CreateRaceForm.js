@@ -3,41 +3,63 @@ import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormLabel from '@mui/material/FormLabel';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DatePicker } from "@mui/lab";
 import ContentBox from "../../UI/ContentBox";
 
 const CreateRaceForm = ({ isCreate, onCreate, raceData }) => {
     const [raceTypeMessage, setRaceTypeMessage] = useState('');
-    const [raceDate, setRaceDate] = useState(null);
+    const [raceDate, setRaceDate] = useState("");
+    const [raceName, setRaceName] = useState("");
+    const [raceType, setRaceType] = useState();
 
-    const handleChangeTypeOfRace = (event) => {
-        switch (event.target.value) {
-            case "public":
+    const handleChangeTypeOfRace = (event) => { 
+        let type = event.target.value ;
+        switch (type) {
+            case "2":
                 setRaceTypeMessage('Veřejný závod: závod viditelný pro všechny bez přihlášení');
                 break;
-            case "nonpublic":
+            case "3":
                 setRaceTypeMessage('Neveřejný závod: závod viditelný pouze pro toho, kdo má odkaz');
                 break;
-            case "private":
+            case "1":
                 setRaceTypeMessage('Soukromý závod: závod viditelný pouze pro tvůrce závodu');
                 break;
+        }        
+        setRaceType(type);
+    }
+
+    useEffect(() => {
+        if(raceData){
+            if(raceData?.date) setRaceDate(raceData.date);
+            if(raceData?.name) setRaceName(raceData.name);
+            if(raceData?.type) setRaceType(`${raceData.type}`);
         }
+    }, [raceData]);
+
+    const handleCreateRace = (event) => {
+        event.preventDefault();
+        let data = {
+            name: raceName,
+            date: raceDate,
+            type: parseInt(raceType)
+        }
+        onCreate(data);
     }
 
     return (
         <ContentBox sx={{maxWidth: 1000}}>
-            <Box component="form" onSubmit={onCreate}>
+            <Box component="form" onSubmit={handleCreateRace}>
                 <FormLabel id="race-type-radio-buttons-group">{isCreate ? "Vyberte typ závodu" : "Typ závodu"}</FormLabel>
                 <RadioGroup
                     row
                     aria-labelledby="race-type-radio-buttons-group"
                     name="race-type-radio-buttons-group"
-                    onChange={handleChangeTypeOfRace}
+                    onChange={handleChangeTypeOfRace}                    
                 >
-                    <FormControlLabel value="public" control={<Radio />} label="Veřejný" />
-                    <FormControlLabel value="nonpublic" control={<Radio />} label="Neveřejný" />
-                    <FormControlLabel value="private" control={<Radio />} label="Soukromý" />
+                    <FormControlLabel value="2" control={<Radio />} label="Veřejný" checked={raceType == "2"}/>
+                    <FormControlLabel value="3" control={<Radio />} label="Neveřejný" checked={raceType == "3"}/>
+                    <FormControlLabel value="1" control={<Radio />} label="Soukromý" checked={raceType == "1"}/>
                 </RadioGroup>
                 <p>{raceTypeMessage}</p>
                 <Grid container spacing={2}>
@@ -49,7 +71,8 @@ const CreateRaceForm = ({ isCreate, onCreate, raceData }) => {
                             fullWidth
                             id="raceName"
                             label="Název závodu"
-                            autoFocus
+                            value={raceName}
+                            onChange={(input) => {setRaceName(input.target.value)}}
                         />
                     </Grid>
                     <Grid item xs={12} sm={6}>

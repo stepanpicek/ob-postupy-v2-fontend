@@ -14,14 +14,15 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import useAuth from '../../hooks/use-auth';
 
 const listButtonStyle = {
     mx: 2,
     my: 1,
-    '&:hover':{        
+    '&:hover': {
         borderRadius: '5px',
-        color:'#f1f1f1',
-        background:'rgb(55, 55, 55)'
+        color: '#f1f1f1',
+        background: 'rgb(55, 55, 55)'
     },
     '&.Mui-selected:hover': {
         borderRadius: '5px',
@@ -48,6 +49,8 @@ const ADMIN_ITEMS = [
 const DashboardMenu = ({ width, isToggled, isOpened, onOpenMenu }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const auth = useAuth();
+
     return (
         <Drawer
             sx={{
@@ -61,30 +64,32 @@ const DashboardMenu = ({ width, isToggled, isOpened, onOpenMenu }) => {
             onClose={onOpenMenu}
         >
             <Toolbar />
-            <Box sx={(theme) => ({ 
-                overflow: 'auto', 
-                height: '100%', 
-                backgroundColor: 
-                theme.palette.primary.main, 
-                color: 'white' })}>
-                <List sx={{mt:3}}>
+            <Box sx={(theme) => ({
+                overflow: 'auto',
+                height: '100%',
+                backgroundColor:
+                    theme.palette.primary.main,
+                color: 'white'
+            })}>
+                <List sx={{ mt: 3 }}>
                     {MENU_ITEMS.map((item, index) => (
-                        <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{...listButtonStyle}}>
+                        <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{ ...listButtonStyle }}>
                             <ListItemIcon sx={{ color: 'white' }} >{item.icon}</ListItemIcon>
                             <ListItemText primary={item.title} />
                         </ListItemButton>
                     ))}
                 </List>
-
-                <Divider><Chip label="Administrace" icon={<AdminPanelSettingsIcon />} variant='outlined' sx={{ color: 'white' }}/></Divider>
-                <List>
-                    {ADMIN_ITEMS.map((item, index) => (
-                        <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{...listButtonStyle}}>
-                            <ListItemIcon  sx={{ color: 'white' }} >{item.icon}</ListItemIcon>
-                            <ListItemText primary={item.title} />
-                        </ListItemButton>
-                    ))}
-                </List>
+                {((Array.isArray(auth.roles) && auth.roles.includes("Avast")) || auth.roles == "Admin") && <>
+                    <Divider><Chip label="Administrace" icon={<AdminPanelSettingsIcon />} variant='outlined' sx={{ color: 'white' }} /></Divider>
+                    <List>
+                        {ADMIN_ITEMS.map((item, index) => (
+                            <ListItemButton key={item.title} selected={item.url === location.pathname} onClick={() => navigate(item.url)} sx={{ ...listButtonStyle }}>
+                                <ListItemIcon sx={{ color: 'white' }} >{item.icon}</ListItemIcon>
+                                <ListItemText primary={item.title} />
+                            </ListItemButton>
+                        ))}
+                    </List>
+                </>}
             </Box>
         </Drawer>);
 }

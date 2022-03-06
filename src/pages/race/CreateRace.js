@@ -1,8 +1,23 @@
+import { useNavigate } from "react-router-dom";
 import CreateRaceForm from "../../components/dashboard/race/CreateRaceForm";
+import useAuth from "../../hooks/use-auth";
+import useHttp from "../../hooks/use-http";
 
 const CreateRace = () => {
-    const handleCreateRace = (event) => {
-        event.preventDefault();
+    const auth = useAuth();
+    const { isLoading, error, sendRequest } = useHttp();
+    const navigate = useNavigate();
+
+    const handleCreateRace = (inputData) => {
+        sendRequest({
+            url: 'https://localhost:5001/Race/create',
+            method: 'POST',
+            body: inputData,
+            responseType: "text",
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            navigate(`/ucet/editovat-zavod/${data}`);
+        });
     }   
 
     return (

@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useRef } from 'react';
 import { NavLink } from 'react-router-dom';
+import { Card } from 'react-bootstrap';
 
 const PasswordResetRequest = () => {
     const email = useRef();
@@ -21,48 +22,51 @@ const PasswordResetRequest = () => {
 
     return (
         <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <Box
-                sx={{
-                    marginTop: 8,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                }}
-            >
-                <Typography component="h1" variant="h5">
-                    Zapomenuté heslo
-                </Typography>
-                <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-                    <TextField
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="email"
-                        label="Emailová adresa"
-                        name="email"
-                        autoComplete="email"
-                        inputRef={email}
-                        autoFocus
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color = "success"
-                        sx={{ mt: 3, mb: 2 }}
+            <Card className='p-4'>
+                <Card.Body>
+                    <CssBaseline />
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                        }}
                     >
-                        Resetovat heslo
-                    </Button>
-                    <Grid container justifyContent="flex-end">
-                        <Grid item>
-                            <NavLink to="/prihlasit">
-                                Přihlasit
-                            </NavLink>
-                        </Grid>
-                    </Grid>
-                </Box>
-            </Box>
+                        <Typography component="h1" variant="h5">
+                            Zapomenuté heslo
+                        </Typography>
+                        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+                            <TextField
+                                margin="normal"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Emailová adresa"
+                                name="email"
+                                autoComplete="email"
+                                inputRef={email}
+                                autoFocus
+                            />
+                            <Button
+                                type="submit"
+                                fullWidth
+                                variant="contained"
+                                color="success"
+                                sx={{ mt: 3, mb: 2 }}
+                            >
+                                Resetovat heslo
+                            </Button>
+                            <Grid container justifyContent="flex-end">
+                                <Grid item>
+                                    <NavLink to="/prihlasit">
+                                        Přihlasit
+                                    </NavLink>
+                                </Grid>
+                            </Grid>
+                        </Box>
+                    </Box>
+                </Card.Body>
+            </Card>
         </Container>
     );
 }

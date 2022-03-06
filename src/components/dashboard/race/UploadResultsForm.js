@@ -1,6 +1,7 @@
 import { Button, Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
+import useHttp from "../../../hooks/use-http";
 import FileDropzone from "../../UI/FileDropzone";
 
 const ORIS_DATA_MOCK = {
@@ -10,16 +11,22 @@ const ORIS_DATA_MOCK = {
 
 const UploadResultsForm = ({ isUploaded, raceDate, raceId }) => {
     const [orisRaces, setOrisRaces] = useState(ORIS_DATA_MOCK);
-    const [selectedRace, setSelectedRace] = useState('');
+    const [selectedRace, setSelectedRace] = useState('');    
+    const { isLoading, error, sendRequest } = useHttp();
 
     const handleSelectRace = (event) => {
         setSelectedRace(event.target.value);
+        
     };
 
     useEffect(() => {
         if (isUploaded) return;
-        //TODO Fetch oris data for raceDate
-        setOrisRaces(ORIS_DATA_MOCK);
+        if(!raceDate) return;
+        let date = (new Date(raceDate)).toISOString().split('T')[0];
+        sendRequest({url: `https://oris.orientacnisporty.cz/API/?format=json&method=getEventList&all=1&datefrom=${date}&dateto=${date}`}, 
+        (data) => {
+            setOrisRaces(data.Data);
+        })
     }, [isUploaded, raceDate]);
 
     if (isUploaded) {

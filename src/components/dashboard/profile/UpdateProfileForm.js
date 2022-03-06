@@ -2,18 +2,55 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
-import { useRef } from 'react';
+import { useEffect, useState } from 'react';
+import useAuth from '../../../hooks/use-auth';
+import useHttp from '../../../hooks/use-http';
+import { DatePicker } from '@mui/lab';
 
-const UpdateProfileForm = () => {
-    const firstName = useRef();
-    const lastName = useRef();
-    const nickName = useRef();
-    const regNumber = useRef();
-    const birthday = useRef();
+const UpdateProfileForm = (props) => {
+    const [firstName, setFirstName] = useState("");
+    const [lastName, setLastName] = useState("");
+    const [nickName, setNickName] = useState("");
+    const [regNumber, setRegNumber] = useState("");
+    const [birthday, setBirthday] = useState("");
+    const [email, setEmail] = useState("");
+    const auth = useAuth();
+    const { isLoading, error, sendRequest } = useHttp();
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        let inputData = {
+            userId: props.userId ? props.userId : null,
+            firstName: firstName,
+            lastName: lastName,
+            nickName: nickName,
+            regNumber: regNumber,
+            birthdate: birthday
+        };
+        sendRequest({
+            url: 'https://localhost:5001/Profile/update-profile',
+            method: 'POST',
+            body: inputData,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            console.log(data);
+        });
     };
+
+    useEffect(() => {
+        sendRequest({
+            url: `https://localhost:5001/Profile/${props.userId ? props.userId : ''}`,
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            if (data.firstName) setFirstName(data.firstName);
+            if (data.lastName) setLastName(data.lastName);
+            if (data.nickName) setNickName(data.nickName);
+            if (data.regNumber) setRegNumber(data.regNumber);
+            if (data.birthdate) setBirthday(data.birthdate);
+            if (data.email) setEmail(data.email);
+        });
+    }, []);
 
     return (
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3, display: 'flex', flexDirection: 'column' }} autoComplete="off">
@@ -26,7 +63,8 @@ const UpdateProfileForm = () => {
                         fullWidth
                         id="firstName"
                         label="Jméno"
-                        inputRef={firstName}
+                        value={firstName}
+                        onChange={(input) => { setFirstName(input.target.value); }}
                         autoFocus
                     />
                 </Grid>
@@ -38,7 +76,8 @@ const UpdateProfileForm = () => {
                         label="Příjmení"
                         name="lastName"
                         autoComplete="family-name"
-                        inputRef={lastName}
+                        value={lastName}
+                        onChange={(input) => { setLastName(input.target.value); }}
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -49,7 +88,8 @@ const UpdateProfileForm = () => {
                         label="Přezdívka"
                         name="nicknName"
                         autoComplete="family-name"
-                        inputRef={nickName}
+                        value={nickName}
+                        onChange={(input) => { setNickName(input.target.value); }}
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -58,7 +98,7 @@ const UpdateProfileForm = () => {
                         fullWidth
                         id="email"
                         label="E-mail"
-                        defaultValue="mail@stepanpicek.cz"
+                        value={email}
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
@@ -68,17 +108,21 @@ const UpdateProfileForm = () => {
                         label="ČSOB registrace"
                         name="regNumber"
                         autoComplete="family-name"
-                        inputRef={regNumber}
+                        value={regNumber}
+                        onChange={(input) => { setRegNumber(input.target.value); }}
                     />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                    <TextField
-                        fullWidth
-                        id="birthday"
-                        name="birthday"
-                        autoComplete="family-name"
+                    <DatePicker
+                        mask='__.__.____'
                         label="Datum narození"
-                        inputRef={birthday}
+                        openTo="day"
+                        views={['year', 'month', 'day']}
+                        value={birthday}
+                        onChange={(input) => {
+                            setBirthday(input);
+                        }}
+                        renderInput={(params) => <TextField fullWidth {...params} />}
                     />
                 </Grid>
             </Grid>

@@ -2,6 +2,7 @@ import { Provider } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import DashboardLayout from "./components/layout/DashboardLayout";
 import MainLayout from "./components/layout/MainLayout";
+import useAuth from "./hooks/use-auth";
 import AllUsers from "./pages/admin/AllUsers";
 import Settings from "./pages/admin/Settings";
 import PasswordReset from "./pages/auth/PasswordReset";
@@ -37,7 +38,7 @@ const Router = () => {
                 <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="/zavod/:raceId" element={<Provider store={store}><RaceDetail /></Provider>} />
-            <Route path="/ucet" element={<PrivateRoute  role="User" element={<DashboardLayout />} />}>
+            <Route path="/ucet" element={<PrivateRoute element={<DashboardLayout />} />}>
                 <Route index element={<Dashboard />} />
                 <Route path="profil" element={<Profile />} />
                 <Route path="strava" element={<Strava />} />
@@ -60,9 +61,13 @@ export default Router;
 
 const PrivateRoute = ({element, role }) => {
     let location = useLocation();
-    const isAuth = true;
+    const auth = useAuth();    
 
-    if (!isAuth) {
+    if (!auth.isLoggedIn) {
+        return <Navigate to="/prihlasit" state={{ from: location }} />;
+    }
+    
+    if(role && (( Array.isArray(auth.roles) && !auth.roles.includes(role)) || (auth.roles != role))){
         return <Navigate to="/prihlasit" state={{ from: location }} />;
     }
 

@@ -11,9 +11,10 @@ const useHttp = () => {
       const response = await fetch(requestConfig.url, {
         method: requestConfig.method ? requestConfig.method : 'GET',
         headers: requestConfig.headers ? requestConfig.headers : {},
-        body: requestConfig.body ? JSON.stringify(requestConfig.body) : null,
+        body: requestConfig.body && requestConfig.body instanceof FormData ? requestConfig.body :
+          requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       });
-      
+
       if (!response.ok) {
         throw new Error('Request failed!');
       }
@@ -29,14 +30,17 @@ const useHttp = () => {
         case 'json':
           data = await response.json();
           break;
+        case 'empty':
+          return;
         default: data = await response.json();
       }
       applyData(data);
 
     } catch (err) {
+      console.log(err);
       throw new Error('Request failed!');
     }
-    finally{
+    finally {
       setIsLoading(false);
     }
   }, []);

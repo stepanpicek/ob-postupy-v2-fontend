@@ -1,24 +1,26 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Table from "../components/UI/Table";
 import useHttp from "../hooks/use-http";
 
 const Home = () => {
     const { isLoading, error, sendRequest } = useHttp();
     const [data, setData] = useState([]);
+    const navigate = useNavigate();
+
     useEffect(() => {
-        sendRequest({ url: `https://localhost:44302/races/public` }, (data) => {
-            setData(data.map((item) => {
+        sendRequest({ url: `https://localhost:5001/race/all-public` }, (data) => {
+            setData(data.races.map((item) => {
                 return ({
-                    ID: item.id,
-                    date: new Date(item.startTime),
+                    ID: item.key,
+                    date: new Date(item.date),
                     name: item.name,
-                    organizer: item.organizer
+                    organizer: item.organizer,
+                    oris: item.orisId
                 });
             }));
-            
-            setData((data) => [...data, ...data, ...data, ...data])
         });
-    }, []);
+    }, []);    
 
     const columns = useMemo(
         () => [
@@ -38,6 +40,9 @@ const Home = () => {
                     {
                         Header: 'Název',
                         accessor: 'name',
+                        Cell: (props) => {
+                            return <a href={"\\zavod\\"+ props.cell.row.original.ID}>{props.value}</a>
+                        }
                     },
                     {
                         Header: 'Oddíl',

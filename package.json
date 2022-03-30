@@ -17,6 +17,7 @@
     "jwt-decode": "^3.1.2",
     "leaflet": "^1.7.1",
     "leaflet-geometryutil": "^0.10.0",
+    "leaflet-hotline": "^0.4.0",
     "leaflet-imageoverlay-rotated": "^0.2.1",
     "leaflet.marker.slideto": "^0.3.0",
     "react": "^17.0.2",

@@ -7,7 +7,8 @@ const initialManualPathState = {
     name: "",
     controls: 0,
     nextControl: 0,
-    isEnd: false
+    isEnd: false,
+    id: null
 };
 
 const manualPathSlice = createSlice({
@@ -17,13 +18,16 @@ const manualPathSlice = createSlice({
         addName(state, action){
             state.name = action.payload;
         },
+        addName(state, action){
+            state.id = action.payload;
+        },
         setControls(state, action){
             state.controls = action.payload;
         },
         addPoint(state, action){
             state.points.push(action.payload);
             state.lastPoint = action.payload;
-            if(state.lastPoint.isControl){
+            if(state.lastPoint.isControl || state.lastPoint.isNextStart){
                 if(state.nextControl == state.controls - 1){
                     state.isEnd = true;
                 }
@@ -33,7 +37,7 @@ const manualPathSlice = createSlice({
         removeLastPoint(state){
             let last = state.points.pop();            
             if(!last) return; 
-            if(last.isControl){
+            if(last.isControl || last.isNextStart){
                 state.nextControl--;
             }
             state.lastPoint = state.points[state.points.length-1];
@@ -45,7 +49,9 @@ const manualPathSlice = createSlice({
             state.nextControl = initialManualPathState.nextControl;
             state.isEnd = false;
         },
-        open(state){
+        open(state, action){
+            state.id = action.payload.id;
+            state.name = action.payload.name;
             state.isOpened = true;
         },
         close(state){
@@ -55,6 +61,7 @@ const manualPathSlice = createSlice({
             state.name = initialManualPathState.name;
             state.isEnd = initialManualPathState.isEnd;
             state.nextControl = initialManualPathState.nextControl;
+            state.id = initialManualPathState.id;
         }
     }
 });

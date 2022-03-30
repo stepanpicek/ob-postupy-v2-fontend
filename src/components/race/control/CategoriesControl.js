@@ -18,8 +18,8 @@ const CategoriesControl = () => {
 
     useEffect(() => {
         if (!raceId) return;
-        sendRequest({ url: `https://localhost:44302/races/categories?key=${raceId}` }, (data) => {
-            dispatch(raceActions.setCategories(data));
+        sendRequest({ url: `https://localhost:5001/result/categories/${raceId}` }, (data) => {
+            dispatch(raceActions.setCategories(data.categories));
         });
     }, [raceId]);
 

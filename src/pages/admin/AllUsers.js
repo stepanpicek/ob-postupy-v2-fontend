@@ -30,6 +30,7 @@ const AllUsers = () => {
             url: `https://localhost:5001/Role/add-admin`,
             method: 'POST',
             body: {userId: id},
+            responseType: 'empty',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         })
         .then(() => {
@@ -41,7 +42,8 @@ const AllUsers = () => {
         sendRequest({
             url: `https://localhost:5001/Role/remove-admin`,
             method: 'POST',
-            body: {userId: id},
+            body: {userId: id},            
+            responseType: 'empty',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }) 
         .then(() => {

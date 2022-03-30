@@ -51,11 +51,15 @@ const RaceDetail = () => {
     let { raceId } = useParams();
 
     useEffect(() => {
-        sendRequest({ url: `https://localhost:44302/races/get?key=${raceId}` },
-            (data) => {
-                dispatch(raceActions.addId({ id: data.key }));
+        sendRequest({ url: `https://localhost:5001/race/show/${raceId}`, responseType: 'empty' })
+        .then(() => {
+                dispatch(raceActions.addId({ id: raceId }));
             });
     }, [raceId])
+
+    useEffect(() => {
+        dispatch({type: "reset-all"});
+    }, [])
 
     return (
         <>

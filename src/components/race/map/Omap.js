@@ -18,17 +18,17 @@ const OMap = () => {
     const dispatch = useDispatch();    
 
     useEffect(() => {
-        if (!raceId) return;
+        if (!raceId) return;    
 
-        sendRequest({ url: `https://localhost:44302/maps/image?raceKey=${raceId}`, responseType: 'blob' }, (data) => {
+        sendRequest({ url: `https://localhost:5001/map/image/${raceId}`, responseType: 'blob' }, (data) => {
             let objectURL = URL.createObjectURL(data);
             let image = new Image();
             image.src = objectURL;
             setImage(image);
         });
-        sendRequest({ url: `https://localhost:44302/maps/race?raceKey=${raceId}` }, (data) => {
+        sendRequest({ url: `https://localhost:5001/map/info/${raceId}` }, (data) => {
             dispatch(raceActions.addMapScale(data.scale));
-            setCorners(data.corners);
+            setCorners(data.position);
         });
     }, [raceId, setCorners]);
 

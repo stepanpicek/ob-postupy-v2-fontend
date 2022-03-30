@@ -38,7 +38,7 @@ const DrawPath = () => {
         click: (event) => {
             let distance = map.distance(course[nextControl].center, event.latlng);
             if (distance < 8) {
-                dispatch(manualPathActions.addPoint({ center: course[nextControl].center, isControl: true }));
+                dispatch(manualPathActions.addPoint({ center: course[nextControl].center, isControl: course[nextControl].type != 'Start', isNextStart: course[nextControl].type == 'Start'}));
                 setControlOpacity(0.2);
             }
         }

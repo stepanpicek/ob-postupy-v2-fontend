@@ -22,7 +22,7 @@ const Course = () => {
             dispatch(raceActions.setCourse(null));
             return;
         }
-        sendRequest({ url: `https://localhost:44302/courses/get?id=${courseId}` }, (data) => {
+        sendRequest({ url: `https://localhost:5001/course/${courseId}` }, (data) => {
             //setCourse(data);
             dispatch(raceActions.setCourse(parseCourseData(data)));
         });
@@ -33,20 +33,20 @@ const Course = () => {
     }, [course])
 
     const parseCourseData = (data) => {
-        if (!data || !data.courseControl) {
+        if (!data || !data.controls) {
             setCourseData(null);
             return;
         }
         let ratio = mapScale / 15000;
         let courseData = [];
-        let controls = data.courseControl.slice();
+        let controls = data.controls.slice();
         controls.sort((a, b) => a.order - b.order);
         controls.forEach((control, index) => {
-            let center = [control.control.coordinates.item1, control.control.coordinates.item2];
+            let center = control.position;
             let radius = Math.ceil(40 * ratio);
             switch (control.type) {
                 case 'Finish':
-                    courseData.push({ id: control.controlId, type: control.type, center: center, radius: Math.ceil(50 * ratio) });
+                    courseData.push({ id: control.id, type: control.type, center: center, radius: Math.ceil(50 * ratio) });
                     break;
                 case 'Start':
                     courseData.push(getStart(center, controls, index, control, radius));
@@ -54,7 +54,7 @@ const Course = () => {
                 case 'Control':
                     courseData.push(
                         {
-                            id: control.controlId,
+                            id: control.id,
                             type: control.type,
                             center: center,
                             radius: radius,
@@ -69,10 +69,10 @@ const Course = () => {
     const getStart = (center, controls, index, control, radius) => {
         let controlForAngle = center;
         if (index < controls.length - 1) {
-            controlForAngle = [controls[index + 1].control.coordinates.item1, controls[index + 1].control.coordinates.item2];
+            controlForAngle = controls[index + 1].position;
         }
         else if (index > 0) {
-            controlForAngle = [controls[index - 1].control.coordinates.item1, controls[index - 1].control.coordinates.item2];
+            controlForAngle = controls[index - 1].position;
         }
         return { id: control.controlId, type: control.type, center: center, radius: radius, nextControl: controlForAngle };
     }
@@ -80,10 +80,10 @@ const Course = () => {
     const getAngles = (center, controls, index) => {
         let first, second = null;
         if (index > 0) {
-            first = [controls[index - 1].control.coordinates.item1, controls[index - 1].control.coordinates.item2];
+            first = controls[index - 1].position;
         }
         if (index < controls.length - 1) {
-            second = [controls[index + 1].control.coordinates.item1, controls[index + 1].control.coordinates.item2];
+            second = controls[index + 1].position;
         }
         return [angle(center, first), angle(center, second)];
     }
@@ -97,20 +97,20 @@ const Course = () => {
         course.forEach((control, index) => {
             switch (control.type) {
                 case 'Finish':
-                    courseData.push(<Finish key={control.id} radius={control.radius} center={control.center} />);
+                    courseData.push(<Finish key={control.id ?? index} radius={control.radius} center={control.center} />);
                     break;
                 case 'Start':
-                    courseData.push(<Start key={control.id} radius={control.radius} center={control.center} nextControl={control.nextControl} />);
+                    courseData.push(<Start key={control.id ?? index} radius={control.radius} center={control.center} nextControl={control.nextControl} />);
                     break;
                 case 'Control':
-                    courseData.push(<Control key={control.id} radius={control.radius} center={control.center} label={control.label} />);
+                    courseData.push(<Control key={control.id ?? index} radius={control.radius} center={control.center} label={control.label} />);
                     break;
             }
             if (index < course.length - 1) {
                 let secondCenter = [course[index + 1].center[0], course[index + 1].center[1]];
                 courseData.push(
                     <Line
-                        key={`${control.id}-line`}
+                        key={`${control.id ?? index}-line`}
                         firstCenter={control.center}
                         secondCenter={secondCenter}
                         firstRadius={control.radius}

@@ -15,7 +15,8 @@ const uploadPathSlice = createSlice({
     reducers: {
         open(state, action){
             state.isUploadPathOpened = true;
-            state.path = action.payload
+            state.path = action.payload.path,
+            state.id = action.payload.id
         },
         close(state){
             state.isUploadPathOpened = initialUploadPathState.isUploadPathOpened;

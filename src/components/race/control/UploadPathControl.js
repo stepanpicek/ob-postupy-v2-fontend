@@ -4,6 +4,7 @@ import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { Box } from "@mui/system";
 import { uploadPathActions } from "../../../store/upload-path";
 import { Form } from "react-bootstrap";
+import useHttp from "../../../hooks/use-http";
 
 const UploadPathControl = () => {
     const dispatch = useDispatch();
@@ -12,7 +13,8 @@ const UploadPathControl = () => {
     const endOffset = useSelector((state) => state.uploadPath.endOffset);
     const name = useSelector((state) => state.uploadPath.name);
     const id = useSelector((state) => state.uploadPath.id);
-    
+    const { isLoading, error, sendRequest } = useHttp();
+
     const handleChangeStartOffset = (event) => {
         dispatch(uploadPathActions.changeStartOffset(event.target.value));
     }
@@ -24,9 +26,29 @@ const UploadPathControl = () => {
     const handleGoBack = () => {
         dispatch(uploadPathActions.close());
     }
-    return(
-        <Box sx={{p:3}}>
-            <Button sx={{color: 'white'}} startIcon={<ArrowCircleLeftIcon />} onClick={handleGoBack}>Vrátit se zpět</Button>
+
+    const handleSavePath = () => {
+        let pathForUpload = path.slice(startOffset, path.length - endOffset).map((position) => {
+            return {
+                lat: position[0],
+                lon: position[1],
+                timestamp: position[2]
+            };
+        });
+
+        sendRequest({ url: `https://localhost:5001/path/upload`, method: 'POST', body: {
+            personResultId: id,
+            path: pathForUpload
+        }, responseType: 'empty', 
+        headers: { 'Content-Type': 'application/json', 'accept': '*/*' } })
+        .then(() => {
+            handleGoBack();
+        });
+    }
+
+    return (
+        <Box sx={{ p: 3 }}>
+            <Button sx={{ color: 'white' }} startIcon={<ArrowCircleLeftIcon />} onClick={handleGoBack}>Vrátit se zpět</Button>
             <div>Úprava trasy pro:</div>
             <Typography variant="h6">{name}</Typography>
 
@@ -35,6 +57,8 @@ const UploadPathControl = () => {
 
             <div style={{ display: 'flex' }}>Offset od konce: </div>
             <Form.Range value={endOffset} min={0} max={path.length} onChange={handleChangeEndOffset} />
+
+            <Button variant="contained" color="success" sx={{ marginLeft: 'auto' }} onClick={handleSavePath}>Uložit trasu</Button>
         </Box>
     );
 }

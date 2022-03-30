@@ -4,6 +4,7 @@ import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { animationActions } from "../../../store/animation";
 import { raceActions } from "../../../store/race";
+import PathSettingsControl from "./PathSettingsControl";
 
 const SettingsControl = () => {
     const dispatch = useDispatch();
@@ -71,6 +72,8 @@ const SettingsControl = () => {
                 <option value="50">50x</option>                 
                 <option value="100">100x</option>
             </Form.Select>
+
+            <PathSettingsControl />
         </Box>
     );
 }

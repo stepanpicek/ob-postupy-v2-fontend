@@ -18,9 +18,8 @@ const DrawLine = ({ actualControl }) => {
 
     const handleMapMouseClick = (event) => {
         let distance = map.distance(actualControl, event.latlng);
-        console.log(distance);
         if (distance >= 8) {
-            dispatch(manualPathActions.addPoint({ center: event.latlng, isControl: false }));
+            dispatch(manualPathActions.addPoint({ center: [event.latlng.lat, event.latlng.lng], isControl: false }));
         }
     }
 

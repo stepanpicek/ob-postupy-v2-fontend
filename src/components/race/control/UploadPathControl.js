@@ -5,6 +5,8 @@ import { Box } from "@mui/system";
 import { uploadPathActions } from "../../../store/upload-path";
 import { Form } from "react-bootstrap";
 import useHttp from "../../../hooks/use-http";
+import { ThreeDots } from "react-loader-spinner";
+import useAlertWrapper from "../../../hooks/use-alert";
 
 const UploadPathControl = () => {
     const dispatch = useDispatch();
@@ -13,7 +15,8 @@ const UploadPathControl = () => {
     const endOffset = useSelector((state) => state.uploadPath.endOffset);
     const name = useSelector((state) => state.uploadPath.name);
     const id = useSelector((state) => state.uploadPath.id);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
+    const alert = useAlertWrapper();
 
     const handleChangeStartOffset = (event) => {
         dispatch(uploadPathActions.changeStartOffset(event.target.value));
@@ -41,9 +44,18 @@ const UploadPathControl = () => {
             path: pathForUpload
         }, responseType: 'empty', 
         headers: { 'Content-Type': 'application/json', 'accept': '*/*' } })
-        .then(() => {
+        .then((status) => {
+            if(!status){
+                alert.success("Trasa byla uložena.");
+            }
             handleGoBack();
         });
+    }
+
+    if (isLoading) {
+        return (
+            <ThreeDots color="#2e7d32" height={80} width={80} />
+        );
     }
 
     return (

@@ -14,7 +14,7 @@ const CategoriesControl = () => {
     const categories = useSelector((state) => state.race.categories);
     const selectedCategory = useSelector((state) => state.race.categoryId);
     const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
 
     useEffect(() => {
         if (!raceId) return;

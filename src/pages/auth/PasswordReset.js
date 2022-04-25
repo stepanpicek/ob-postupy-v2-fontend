@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSearchParams } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
@@ -8,33 +8,65 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useRef } from 'react';
 import { Card } from '@mui/material';
+import useHttp from '../../hooks/use-http';
+import useAlertWrapper from '../../hooks/use-alert';
 
 const PasswordReset = () => {
     let [searchParams] = useSearchParams();
     const password = useRef();
     const passwordCheck = useRef();
+    const navigate = useNavigate();
+    const { isLoading, sendRequest } = useHttp();
+    const alert = useAlertWrapper();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log({
-            password: password.current.value,
+        var token = searchParams.get('token');
+        var email = searchParams.get('email');
+        sendRequest({
+            url: 'https://localhost:5001/Authenticate/reset-password',
+            method: 'POST',
+            body: {
+                email: email,
+                token: token,
+                password: password.current.value
+            },
+            headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+            responseType: 'empty'
         })
+            .then((status) => {
+                if(status){
+                    alert.warning("Údaje nejsou v pořádku. Zkuste to znovu.")
+                }
+                else{
+                    alert.success("Heslo bylo změněno. Nyní se prosím přihlašte.");
+                    navigate('/prihlasit');
+                }
+            });
     };
 
+    useEffect(() => {
+        if (!searchParams.get('email') || !searchParams.get('token')) {
+            navigate('/prihlasit');
+        }
+    }, []);
+
     return (
-        <Card variant="outlined">
-            <Container component="main" maxWidth="xs">
+        <Container component="main" maxWidth="xs">
+            <Card variant="outlined" className='p-4'>
                 <CssBaseline />
                 <Box
                     sx={{
-                        marginTop: 8,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                     }}
                 >
                     <Typography component="h1" variant="h5">
-                        Změna hesla pro {searchParams.get('email')}
+                        Změna hesla pro
+                    </Typography>
+                    <Typography component="p" variant="subtitle1">
+                         <strong>{searchParams.get('email')}</strong>
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
                         <TextField
@@ -59,20 +91,20 @@ const PasswordReset = () => {
                             autoComplete="password-new"
                             inputRef={passwordCheck}
                             type="password"
-                            autoFocus
                         />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
+                            color="success"
                             sx={{ mt: 3, mb: 2 }}
                         >
                             Změnit heslo
                         </Button>
                     </Box>
                 </Box>
-            </Container>
-        </Card>
+            </Card>
+        </Container>
     );
 };
 

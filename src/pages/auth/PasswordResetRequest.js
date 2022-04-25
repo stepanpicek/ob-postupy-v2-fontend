@@ -7,17 +7,36 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { useRef } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Card } from 'react-bootstrap';
+import useHttp from '../../hooks/use-http';
+import useAlertWrapper from '../../hooks/use-alert';
 
 const PasswordResetRequest = () => {
     const email = useRef();
+    const navigate = useNavigate();
+    const { isLoading, sendRequest } = useHttp();
+    const alert = useAlertWrapper();
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log({
-            email: email.current.value,
-        })
+        sendRequest({
+            url: 'https://localhost:5001/Authenticate/forgot-password',
+            method: 'POST',
+            body: {
+                email: email.current.value,
+            },
+            headers: { 'Content-Type': 'application/json', 'accept': '*/*' },
+            responseType: 'empty'
+        }).then((status) => {
+            if(status){
+                if (status === 401 || status === 400) {
+                    alert.warning("Zadaný email neexistuje");
+                }
+                return;
+            }
+            alert.info(`Email s odkazem na resetování hesla byl odeslán na ${email.current.value}`);
+        });
     };
 
     return (

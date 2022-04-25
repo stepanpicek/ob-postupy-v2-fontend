@@ -1,5 +1,11 @@
 import L from "leaflet";
 import "leaflet-geometryutil";
+import { create, all } from 'mathjs'
+
+const config = {
+  matrix: 'Array'
+}
+const math = create(all, config)
 
 export function degreesToRadians(degrees) {
     return (degrees * Math.PI) / 180;
@@ -80,4 +86,88 @@ export function position(position, distance, angle) {
         Math.cos((distance / earthRadius) - Math.sin(lat1)) * Math.sin(lat2));
 
     return [radiansToDegrees(lat2), radiansToDegrees(lon2)];
+}
+
+
+export function calibrateMap(width, height, realPoints, pixelPoints) {
+
+    var latlng = tolatlng(1, height, realPoints, pixelPoints);
+    var nw_lat = latlng[0];
+    var nw_lng = latlng[1];
+
+    var latlng = tolatlng(width, height, realPoints, pixelPoints);
+    var ne_lat = latlng[0];
+    var ne_lng = latlng[1];
+
+    var latlng = tolatlng(1, 1, realPoints, pixelPoints);
+    var sw_lat = latlng[0];
+    var sw_lng = latlng[1];
+
+    var latlng = tolatlng(width, 1, realPoints, pixelPoints);
+    var se_lat = latlng[0];
+    var se_lng = latlng[1];
+
+    var ww = (nw_lng + sw_lng) / 2;
+    var ee = (ne_lng + se_lng) / 2;
+    var nn = (ne_lat + nw_lat) / 2;
+    var ss = (se_lat + sw_lat) / 2;
+    var rr = (Math.atan((nw_lng - sw_lng) / (sw_lat - nw_lat) / 2)) / Math.PI * 180;
+
+    var pos = {
+        corners: [{lat: nw_lat,lon: nw_lng},{lat: ne_lat,lon: ne_lng},{lat: sw_lat,lon: sw_lng},{lat: se_lat,lon: se_lng}],
+        west: ww,
+        east: ee,
+        north: nn,
+        south: ss,
+        rotation: rr        
+    };
+    return pos;
+}
+
+function sortCorners(corners){
+    corners.sort(function (a, b) { return a.lat - b.lat });
+    var top,bottom;
+    if (corners[3].lon < corners[2].lon) {
+      top = [corners[3], corners[2]];
+    }
+    else {
+      top = [corners[2], corners[3]];
+    }
+
+    if (corners[1].lon < corners[0].lon) {
+      bottom = [corners[0], corners[1]];
+    }
+    else {
+      bottom = [corners[1], corners[0]];
+    }
+    return top.concat(bottom);
+}
+
+function tolatlng(x, y, realPoints, pixelPoints) {
+    var A = math.matrix([
+        [pixelPoints[0].lng, 0, pixelPoints[0].lat, 0, 1, 0],
+        [0, pixelPoints[0].lng, 0, pixelPoints[0].lat, 0, 1],
+        [pixelPoints[1].lng, 0, pixelPoints[1].lat, 0, 1, 0],
+        [0, pixelPoints[1].lng, 0, pixelPoints[1].lat, 0, 1],
+        [pixelPoints[2].lng, 0, pixelPoints[2].lat, 0, 1, 0],
+        [0, pixelPoints[2].lng, 0, pixelPoints[2].lat, 0, 1]
+    ]);
+    var b = math.matrix([realPoints[0].lng, realPoints[0].lat, realPoints[1].lng, realPoints[1].lat, realPoints[2].lng, realPoints[2].lat]);
+    var Ainv = math.inv(A);
+    var c = math.multiply(Ainv, b);
+    var c1 = c.get([0]);
+    var c2 = c.get([2]);
+    var c3 = c.get([4]);
+    var c4 = c.get([1]);
+    var c5 = c.get([3]);
+    var c6 = c.get([5]);
+
+    var lng = c1 * x + c2 * y + c3;
+    var lat = c4 * x + c5 * y + c6;
+
+    var latlng = new Array();
+    latlng[0] = lat;
+    latlng[1] = lng;
+
+    return latlng;
 }

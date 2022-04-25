@@ -1,0 +1,7 @@
+.editor{
+    width: auto;
+    height: auto;
+    border: 1px dashed grey;
+    padding: 10px;
+    background-color: white;
+}

@@ -5,7 +5,7 @@ import useHttp from "../../hooks/use-http";
 
 const CreateRace = () => {
     const auth = useAuth();
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const navigate = useNavigate();
 
     const handleCreateRace = (inputData) => {

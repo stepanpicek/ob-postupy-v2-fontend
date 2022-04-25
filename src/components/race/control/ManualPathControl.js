@@ -4,6 +4,7 @@ import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import { manualPathActions } from '../../../store/manual-path'
 import { Box } from "@mui/system";
 import useHttp from "../../../hooks/use-http";
+import useAlertWrapper from "../../../hooks/use-alert";
 
 const ManualPathControl = () => {
     const dispatch = useDispatch();
@@ -11,7 +12,8 @@ const ManualPathControl = () => {
     const path = useSelector((state) => state.manualPath.points);
     const isEnd = useSelector((state) => state.manualPath.isEnd);
     const id = useSelector((state) => state.manualPath.id);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
+    const alert = useAlertWrapper();
 
     const handleGoBack = () => {
         dispatch(manualPathActions.close());
@@ -52,7 +54,10 @@ const ManualPathControl = () => {
                 responseType: 'empty',
                 headers: { 'Content-Type': 'application/json', 'accept': '*/*' }
             })
-            .then(() => {
+            .then((status) => {
+                if(!status){
+                    alert.success("Trasa byla uložena.");
+                }
                 handleGoBack();
             });
     }

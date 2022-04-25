@@ -1,4 +1,4 @@
-import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton } from "@mui/material";
+import { Box, Button, Dialog, DialogContent, DialogTitle, IconButton, TextField } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useHttp from "../../../hooks/use-http";
@@ -9,13 +9,15 @@ import CreateIcon from '@mui/icons-material/Create';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
-import BarChartIcon from '@mui/icons-material/BarChart';
 import classes from './Competitor.module.css';
 import { manualPathActions } from "../../../store/manual-path";
 import FileDropzone from "../../UI/FileDropzone";
 import { uploadPathActions } from "../../../store/upload-path";
 import { parseFIT, parseGPX } from "../../../services/parser";
 import { showPathActions } from "../../../store/show-path";
+import useAuth from "../../../hooks/use-auth";
+import useAlertWrapper from "../../../hooks/use-alert";
+import { DatePicker } from "@mui/lab";
 
 const colorArray = [
     "#FF0000", "#0000FF", "#FFFF00", "#008000", "#F5A623", "#50E3C2", "#800080", "#7ED321", "#008080", "#D2691E", "#A9A9A9", "#EE82EE", "#00FA9A", "#000000"
@@ -30,8 +32,12 @@ const CompetitorControl = ({ competitor, initPlay }) => {
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [color, setColor] = useState('#ff0000');
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const isFirstRun = useRef(true);
+    const auth = useAuth();
+    const [isStravaAuth, setIsStravaAuth] = useState(false);
+    const [stravaDate, setStravaDate] = useState(null);
+    const [stravaActivities, setStravaActivities] = useState([]);
 
     useEffect(() => {
         if (isFirstRun.current) {
@@ -51,6 +57,30 @@ const CompetitorControl = ({ competitor, initPlay }) => {
         return result && result.length > 0;
     };
 
+    useEffect(() => {
+        if (!openUploadDialog) return;
+
+        sendRequest({
+            url: `https://localhost:5001/strava/`,
+            headers: { 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            setIsStravaAuth(data.isAuth);
+            if (data.isAuth) {
+                setStravaDate(competitor.startTime);
+            }
+        });
+    }, [openUploadDialog]);
+
+    useEffect(() => {
+        if (!stravaDate) return;
+
+        sendRequest({
+            url: `https://localhost:5001/strava/activities/${stravaDate}`,
+            headers: { 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            setStravaActivities(data.activities);
+        });
+    }, [stravaDate]);
 
     const handleUserPlay = () => {
         if (!isPlayed) {
@@ -83,7 +113,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
 
     const handleManualPath = () => {
         dispatch(animationActions.reset());
-        dispatch(manualPathActions.open({id: competitor.id, name: `${competitor.firstName} ${competitor.lastName}`}));
+        dispatch(manualPathActions.open({ id: competitor.id, name: `${competitor.firstName} ${competitor.lastName}` }));
     }
 
     const handleOpenUploadDialog = () => {
@@ -92,6 +122,18 @@ const CompetitorControl = ({ competitor, initPlay }) => {
 
     const handleCloseUploadDialog = () => {
         setOpenUploadDialog(false);
+    }
+
+    const handleUploadStravaActivity = (id) => {
+        sendRequest({
+            url: `https://localhost:5001/strava/activity/${id}`,
+            headers: { 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            let points = data.locations.map(l => [l.lat, l.lon, l.timestamp]);
+            handleCloseUploadDialog();
+            dispatch(animationActions.reset());
+            dispatch(uploadPathActions.open({ path: points, id: competitor.id }));
+        });
     }
 
     const handleUploadFile = async (files) => {
@@ -127,7 +169,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
         handleCloseUploadDialog();
         dispatch(animationActions.reset());
         if (points) {
-            dispatch(uploadPathActions.open({path: points, id: competitor.id}));
+            dispatch(uploadPathActions.open({ path: points, id: competitor.id }));
         }
         else {
             //ERROR
@@ -157,7 +199,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
                 <Box sx={{ flexGrow: 1, display: 'flex', mt: '5px' }}>
 
                     <p onClick={() => { setIsMenuOpened(state => !state) }} className={classes.competitorName}>
-                        {competitor.position}. {competitor.firstName} {competitor.lastName}
+                        {competitor.status == "ok" ? `${competitor.position}.` : '  '} {competitor.firstName} {competitor.lastName}
                     </p>
                 </Box>
 
@@ -180,13 +222,66 @@ const CompetitorControl = ({ competitor, initPlay }) => {
                             {isPathShown() ? "Skrýt trasu" : "Zobrazit trasu"}
                         </Button>
                     }
-                    <Button size="small" sx={{ color: 'white' }} startIcon={<BarChartIcon />}>Zobrazit statistiky</Button>
+                    {
+                        /*
+                        <Button size="small" sx={{ color: 'white' }} startIcon={<BarChartIcon />}>Zobrazit statistiky</Button>
+                        */
+                    }
                 </Box>
             }
             <Dialog open={openUploadDialog} onClose={handleCloseUploadDialog}>
                 <DialogTitle>Nahrát trasu pro {competitor.firstName} {competitor.lastName}</DialogTitle>
                 <DialogContent>
                     <FileDropzone formats={"GPX, FIT"} onDrop={handleUploadFile} />
+                    <hr></hr>
+                    <div className="d-flex flex-column justify-content-center mt-4">
+                        {!isStravaAuth ? <p>Pro nahrání trasy ze Stravy se prosím přihlašte a v profilu propojte svůj účet se Stravou.</p> :
+                            <>
+                                <DatePicker
+                                    mask='__.__.____'
+                                    label="Datum aktivity"
+                                    openTo="day"
+                                    views={['year', 'month', 'day']}
+                                    value={stravaDate}
+                                    onChange={(newValue) => {
+                                        setStravaDate(new Date(newValue).toDateString());
+                                    }}
+                                    renderInput={(params) => <TextField required fullWidth {...params} />}
+                                />
+                                <table className="table table-sm mt-4">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" className="px-3">Název</th>
+                                            <th scope="col" className="px-3">Vzdálenost</th>
+                                            <th scope="col" className="px-3">Čas</th>
+                                            <th scope="col" className="px-3"></th>
+                                        </tr>
+                                    </thead>
+                                    {!stravaActivities || stravaActivities.length == 0 ?
+                                        <tr>
+                                            <td colSpan={4}>V tento den není na Stravě žádná aktivita.</td>
+                                        </tr> :
+                                        stravaActivities?.map((activity) => {
+                                            return (<tr>
+                                                <td className="px-3">{activity.name}</td>
+                                                <td className="px-3">{activity.distance}</td>
+                                                <td className="px-3">{activity.time}</td>
+                                                <td className="px-3">
+                                                    <Button
+                                                        color="success"
+                                                        variant="outlined"
+                                                        onClick={() => { handleUploadStravaActivity(activity.id) }}>
+                                                        Nahrát ze Stravy
+                                                    </Button>
+                                                </td>
+                                            </tr>)
+                                        })}
+                                </table>
+
+                            </>}
+
+                        <img src="/powerByStrava.png" className="align-self-end" alt="Powered by Strava"></img>
+                    </div>
                 </DialogContent>
             </Dialog>
         </Box>

@@ -8,13 +8,19 @@ import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import AddIcon from '@mui/icons-material/Add';
 import UpdateProfileForm from "../../components/dashboard/profile/UpdateProfileForm";
+import useAlertWrapper from "../../hooks/use-alert";
+import AlertDialog from "../../components/UI/AlertDialog";
 
 const AllUsers = () => {
     const [rows, setRows] = useState([]);
     const [userId, setUserId] = useState();
     const [updateDialogOpened, setUpdateDialogOpened] = useState(false);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const auth = useAuth();
+    const alert = useAlertWrapper();
+    const [alertDialog, setAlertDialog] = useState(false);    
+    const [alertDialogContent, setAlertDialogContent] = useState(null);    
+    const [alertDialogConfirm, setAlertDialogConfirm] = useState(null);
 
     const handleUpdateUser = (id) => {
         setUserId(id);
@@ -22,7 +28,14 @@ const AllUsers = () => {
     }
 
     const handleRemoveUser = (id) => {
-        console.log(id);
+        var confirm = () => () => {
+            setAlertDialog(false);
+        }
+        
+        let user = rows.find(r => r.id === id);
+        setAlertDialogConfirm(confirm);
+        setAlertDialogContent(<>Opravdu chcete smazat uživatele <strong>{user.firstName} {user.lastName} ({user.email})</strong>? </>);
+        setAlertDialog(true);
     }
 
     const handleAddAdmin = (id) => {
@@ -72,7 +85,10 @@ const AllUsers = () => {
                     id: 'admin',
                     accessor: 'isAdmin',
                     Cell: (props) => {
-                        if (props.value) {
+                        if(props.row.original.email == 'mail@stepanpicek.cz'){
+                            return <>Super Administrátor</>
+                        }
+                        if (props.value) {                            
                             return <> Administrátor
                                 <Tooltip title="Odebrat admin práva">
                                     <IconButton color="error" onClick={() => { handleRemoveAdmin(props.row.original.id) }}>
@@ -96,12 +112,22 @@ const AllUsers = () => {
                 {
                     id: 'edit',
                     accessor: 'id',
-                    Cell: ({ value }) => (<Button variant="outlined" startIcon={<EditIcon />} color="success" onClick={() => { handleUpdateUser(value) }}>Upravit</Button>)
+                    Cell: (props) => {
+                        if(props.row.original.email == 'mail@stepanpicek.cz'){
+                            return null;
+                        }
+                        return <Button variant="outlined" startIcon={<EditIcon />} color="success" onClick={() => { handleUpdateUser(props.value) }}>Upravit</Button>;
+                    }
                 },
                 {
                     id: 'delete',
                     accessor: 'id',
-                    Cell: ({ value }) => (<Button variant="outlined" startIcon={<CloseIcon />} color="error" onClick={() => { handleRemoveUser(value) }}>Smazat</Button>)
+                    Cell: (props) => {
+                        if(props.row.original.email == 'mail@stepanpicek.cz'){
+                            return null;
+                        }
+                        return <Button variant="outlined" startIcon={<CloseIcon />} color="error" onClick={() => { handleRemoveUser(props.value) }}>Smazat</Button>;
+                    }
                 }
             ],
         }
@@ -129,6 +155,7 @@ const AllUsers = () => {
                 <UpdateProfileForm userId={userId} />
             </DialogContent>
         </Dialog>
+        <AlertDialog open={alertDialog} close={() => {setAlertDialog(false)}} confirm={alertDialogConfirm} content={alertDialogContent} />
     </>;
 };
 

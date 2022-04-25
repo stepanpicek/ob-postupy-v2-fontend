@@ -11,6 +11,7 @@ import { useRef } from 'react';
 import useHttp from '../../hooks/use-http';
 import useAuth from '../../hooks/use-auth';
 import { Card } from 'react-bootstrap';
+import useAlertWrapper from '../../hooks/use-alert';
 
 const SignUp = () => {
     const firstName = useRef();
@@ -18,9 +19,10 @@ const SignUp = () => {
     const email = useRef();
     const password = useRef();
     const passwordCheck = useRef();
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const auth = useAuth();
     const navigate = useNavigate();
+    const alert = useAlertWrapper();
 
     useEffect(() => {
         if (auth.isLoggedIn) {
@@ -46,8 +48,10 @@ const SignUp = () => {
             body: registerData,
             headers: { 'Content-Type': 'application/json' },
             responseType: 'text'
-        }, (data) => {
-
+        }).then((status) => {
+            if(status === 400){
+                alert.warning("Zadané údaje nejsou správné.");
+            }
         });
     };
 
@@ -132,6 +136,7 @@ const SignUp = () => {
                                 fullWidth
                                 variant="contained"
                                 sx={{ mt: 3, mb: 2 }}
+                                color="success"
                             >
                                 Registrovat
                             </Button>

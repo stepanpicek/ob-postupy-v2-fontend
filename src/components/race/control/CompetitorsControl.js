@@ -1,6 +1,8 @@
 import { Box } from "@mui/material";
 import { useEffect, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
 import { useDispatch, useSelector } from "react-redux";
+import useAlertWrapper from "../../../hooks/use-alert";
 import useHttp from "../../../hooks/use-http";
 import { animationActions } from "../../../store/animation";
 import { showPathActions } from "../../../store/show-path";
@@ -10,8 +12,9 @@ const CompetitorsControl = () => {
     const categoryId = useSelector((state) => state.race.categoryId);    
     const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
     const [competitors, setCompetitors] = useState([]);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const dispatch = useDispatch();
+    const alert = useAlertWrapper();
 
 
     useEffect(() => {
@@ -27,6 +30,12 @@ const CompetitorsControl = () => {
             setCompetitors(data.people);
         });
     }, [categoryId]);
+    
+    if (isLoading) {
+        return (
+            <ThreeDots color="#2e7d32" height={80} width={80} />
+        );
+    }
 
     return (
         <Box sx={{width: '100%'}}>

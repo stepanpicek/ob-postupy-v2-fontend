@@ -1,5 +1,5 @@
 import { LayersControl, MapConsumer, MapContainer, TileLayer } from "react-leaflet";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import useWindowDimensions from '../../hooks/use-windows-dimensions';
@@ -11,6 +11,7 @@ import MapControl from "../../components/race/MapControl";
 import useHttp from "../../hooks/use-http";
 import { useDispatch, useSelector } from "react-redux";
 import { raceActions } from "../../store/race";
+import useAlertWrapper from "../../hooks/use-alert";
 
 const RaceDetailStyle = {
     main: {
@@ -40,10 +41,11 @@ const RaceDetail = () => {
     const sm = theme.breakpoints.values.sm;
     const { width } = useWindowDimensions();
     const initialPosition = [50.0835494, 14.4341414];
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const dispatch = useDispatch();
     const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
-
+    const navigate = useNavigate();
+    const alert = useAlertWrapper();
     const openMenuHandler = () => {
         setIsOpened(state => !state);
     }
@@ -52,7 +54,13 @@ const RaceDetail = () => {
 
     useEffect(() => {
         sendRequest({ url: `https://localhost:5001/race/show/${raceId}`, responseType: 'empty' })
-        .then(() => {
+        .then((status) => {
+                if(status){
+                    if(status === 401 || status === 400){
+                        alert.warning("Nemáte oprávnění zobrazit tento závod.")
+                    }
+                    return;
+                }
                 dispatch(raceActions.addId({ id: raceId }));
             });
     }, [raceId])

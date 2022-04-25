@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
+import useAlertWrapper from './use-alert';
 
 const useHttp = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const alert = useAlertWrapper();
 
   const sendRequest = useCallback(async (requestConfig, applyData) => {
     setIsLoading(true);
-    setError(null);
     try {
       const response = await fetch(requestConfig.url, {
         method: requestConfig.method ? requestConfig.method : 'GET',
@@ -16,7 +16,10 @@ const useHttp = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Request failed!');
+        if(response.status >= 500){
+          alert.error("Nastal neočekávatelný problém.", true);
+        }
+        return response.status;
       }
 
       let data;
@@ -37,8 +40,13 @@ const useHttp = () => {
       applyData(data);
 
     } catch (err) {
-      console.log(err);
-      throw new Error('Request failed!');
+      if(err.message && err.message.includes("Failed to fetch")){
+        alert.error("Zkontrolujte své internetové připojení a zkuste to znovu.");
+      }
+      else{
+        alert.error("Nastal neočekávatelný problém.", true);
+      }
+      return 500;
     }
     finally {
       setIsLoading(false);
@@ -47,7 +55,6 @@ const useHttp = () => {
 
   return {
     isLoading,
-    error,
     sendRequest,
   };
 };

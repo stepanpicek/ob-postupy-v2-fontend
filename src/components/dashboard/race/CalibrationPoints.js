@@ -23,7 +23,12 @@ const CalibrationPoints = ({calibrationPoints, onSetCalibrationPoints}) => {
     <>
         {calibrationPoints.map((item, index) => {
             let color = getColor(index);
-            return(<Circle key={index} center={item} pathOptions={{ fillColor: color, color: color }} radius={50} />);            
+            return(
+                <div key={`${index}-${item}`}>
+                    <Circle center={item} pathOptions={{ fillColor: color, color: color }} radius={50} />
+                    <Circle center={item} pathOptions={{ fillColor: color, color: color, fillOpacity: 100 }} radius={3} />
+                </div>
+            );            
         })}
     </>
     );

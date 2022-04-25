@@ -1,6 +1,6 @@
 import { Box } from "@mui/system";
 
-const ContentBox = ({ children, sx }) => {
+const ContentBox = ({ children, sx, className }) => {
     return (
         <Box
             sx={{

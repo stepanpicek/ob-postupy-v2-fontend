@@ -9,7 +9,7 @@ import ContentBox from "../../UI/ContentBox";
 
 const CreateRaceForm = ({ isCreate, onCreate, raceData }) => {
     const [raceTypeMessage, setRaceTypeMessage] = useState('');
-    const [raceDate, setRaceDate] = useState("");
+    const [raceDate, setRaceDate] = useState(Date.now());
     const [raceName, setRaceName] = useState("");
     const [raceType, setRaceType] = useState();
 

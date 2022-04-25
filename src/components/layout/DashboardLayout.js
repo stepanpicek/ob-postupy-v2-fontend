@@ -22,7 +22,7 @@ const DashboardLayout = () => {
     }, [width]);
 
     return (
-        <Box sx={{ display: 'flex'}}>
+        <Box sx={{ display: 'flex', width: '100%'}}>
             <TopMenu isToggled={true} onOpenMenu={openMenuHandler} />
             <DashboardMenu width={250} isToggled={width <= sm} isOpened={width <= sm ? isOpened : true}  onOpenMenu={openMenuHandler}/>
             <Box component="div" sx={{ flexGrow: 1, p: 3, overflow: 'auto', width: '100%' }}>

@@ -9,7 +9,7 @@ import { angle } from "../../../services/geo";
 import { raceActions } from "../../../store/race";
 
 const Course = () => {
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const course = useSelector((state) => state.race.course);
     const courseId = useSelector((state) => state.race.courseId);
     const mapScale = useSelector((state) => state.race.mapScale);

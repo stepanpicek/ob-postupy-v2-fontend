@@ -1,8 +1,11 @@
 import { Button, Divider, InputLabel, MenuItem, Select } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
+import { ThreeDots } from "react-loader-spinner";
+import useAlertWrapper from "../../../hooks/use-alert";
 import useAuth from "../../../hooks/use-auth";
 import useHttp from "../../../hooks/use-http";
+import AlertDialog from "../../UI/AlertDialog";
 import FileDropzone from "../../UI/FileDropzone";
 import ResultsDialog from "./ResultsDialog";
 
@@ -17,8 +20,12 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
     const [orisId, setOrisId] = useState('');
     const [results, setResults] = useState(null);
     const [openDialog, setOpenDialog] = useState(false);
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const auth = useAuth();
+    const alert = useAlertWrapper();
+    const [alertDialog, setAlertDialog] = useState(false);    
+    const [alertDialogContent, setAlertDialogContent] = useState(null);    
+    const [alertDialogConfirm, setAlertDialogConfirm] = useState(null);
 
     const handleSelectRace = (event) => {
         setSelectedRace(event.target.value);
@@ -38,11 +45,11 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
             });
         }
         else {
-            if(data.length == 1){
-                let formData = new FormData();                
-		        formData.append('RaceKey', raceId);
-		        formData.append('File', data[0], data[0].name);
-                
+            if (data.length == 1) {
+                let formData = new FormData();
+                formData.append('RaceKey', raceId);
+                formData.append('File', data[0], data[0].name);
+
                 sendRequest({
                     url: `https://localhost:5001/result/`,
                     method: 'POST',
@@ -57,15 +64,24 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
     }
 
     const handleRemoveResults = () => {
-        sendRequest({
-            url: `https://localhost:5001/result/${raceId}`,
-            method: 'DELETE',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
-            responseType: 'empty'
-        }).then(() => {
-            setResults(null);
-            onUpdate();
-        });
+        var confirm = () => () => {
+            sendRequest({
+                url: `https://localhost:5001/result/${raceId}`,
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
+                responseType: 'empty'
+            }).then((status) => {
+                if(!status){
+                    alert.success("Výsledky byly smazány.")
+                    setResults(null);
+                }
+                onUpdate();
+            });
+            setAlertDialog(false);
+        }
+        setAlertDialogConfirm(confirm);
+        setAlertDialogContent(<>Opravdu chcete smazat výsledky?</>);
+        setAlertDialog(true); 
     }
 
     const handleShowResults = () => {
@@ -88,6 +104,12 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
             })
     }, [isUploaded, raceDate]);
 
+    if (isLoading) {
+        return (
+            <ThreeDots color="#2e7d32" height={80} width={80} />
+        );
+    }
+
     if (isUploaded) {
         return (
             <>
@@ -101,7 +123,8 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
                     <Button variant="outlined" color="error" onClick={handleRemoveResults}>Smazat výsledky</Button>
                 </Box>
 
-                <ResultsDialog open={openDialog} onClose={() => { setOpenDialog(state => !state) }} data={results} />
+                <ResultsDialog open={openDialog} onClose={() => { setOpenDialog(state => !state) }} data={results} />            
+                <AlertDialog open={alertDialog} close={() => { setAlertDialog(false) }} confirm={alertDialogConfirm} content={alertDialogContent} />
             </>);
     }
 

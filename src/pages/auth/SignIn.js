@@ -13,14 +13,17 @@ import { useRef } from 'react';
 import useHttp from '../../hooks/use-http';
 import useAuth from '../../hooks/use-auth';
 import { Card } from 'react-bootstrap';
+import useAlertWrapper from '../../hooks/use-alert';
+import { i } from 'mathjs';
 
 const SignIn = () => {
     const login = useRef('');
     const password = useRef('');
     const remember = useRef();
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const auth = useAuth();
     const navigate = useNavigate();
+    const alert = useAlertWrapper();
 
     useEffect(() => {
         if (auth.isLoggedIn) {
@@ -45,6 +48,11 @@ const SignIn = () => {
         }, (data) => {
             auth.login(data);
             navigate("/ucet");
+            alert.success("Přihlášení proběhlo úspěšně.");
+        }).then((status) => {
+            if (status === 401 || status === 400) {
+                alert.warning("Kombinace emailu a hesla není správná.");
+            }
         });
     };
 

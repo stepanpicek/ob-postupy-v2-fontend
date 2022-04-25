@@ -8,7 +8,7 @@ import L from "leaflet";
 import { raceActions } from "../../../store/race";
 
 const OMap = () => {
-    const { isLoading, error, sendRequest } = useHttp();
+    const { isLoading, sendRequest } = useHttp();
     const [corners, setCorners] = useState([]);
     const [image, setImage] = useState(null);
     const [imageLayer, setImageLayer] = useState(null);
@@ -49,7 +49,6 @@ const OMap = () => {
             latLng(corners[1].lat, corners[1].lon),
             latLng(corners[2].lat, corners[2].lon),
             { opacity: transparency/100 });
-
         setImageLayer(imgLayer);
         mapLayer.addLayer(imgLayer);
 

@@ -47,7 +47,7 @@ const TopMenu = (props) => {
                 onClose={handleClose}
             >
                 <MenuItem onClick={() => { navigate("/ucet") }}>Nástěnka</MenuItem>
-                <MenuItem onClick={() => { }}>Moje závody</MenuItem>
+                <MenuItem onClick={() => { navigate("/ucet/moje-zavody") }}>Moje závody</MenuItem>
                 <MenuItem onClick={() => { auth.logout(); navigate("/"); }}>Odhlásit se</MenuItem>
             </Menu>
         </>;

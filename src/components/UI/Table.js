@@ -4,7 +4,8 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTheme } from '@emotion/react';
-import { TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, TablePagination } from '@mui/material';
+import { TextField, Box, FormControl, Select, MenuItem, Checkbox, ListItemText, TablePagination, InputLabel } from '@mui/material';
+import EventIcon from '@mui/icons-material/Event';
 
 function GlobalFilter({
     preGlobalFilteredRows,
@@ -38,21 +39,25 @@ function SelectYearFilter({ years, selectedYears, setYears }) {
         );
     };
     return (
-        <FormControl
-            fullWidth>
-            <Select
-                multiple
-                value={selectedYears.find(s => s.id === 'date')?.value ?? []}
-                onChange={handleChange}
-                renderValue={(selected) => selected.join(', ')}
-            >
-                {years.map((year) =>
-                    <MenuItem key={year} value={year}>
-                        <Checkbox checked={selectedYears.find(s => s.id === 'date')?.value.indexOf(year) > -1} />
-                        <ListItemText primary={year} />
-                    </MenuItem>)}
-            </Select>
-        </FormControl>
+        <Box sx={{ display: 'flex', alignItems: 'end' }}>
+            <EventIcon />
+            <FormControl variant="standard" sx={{ minWidth: 120, ml:1 }}>
+                <InputLabel id="year-label">Rok</InputLabel>
+                <Select
+                    labelId="year-label"
+                    multiple
+                    value={selectedYears.find(s => s.id === 'date')?.value ?? []}
+                    onChange={handleChange}
+                    renderValue={(selected) => selected.join(', ')}
+                >
+                    {years.map((year) =>
+                        <MenuItem key={year} value={year}>
+                            <Checkbox checked={selectedYears.find(s => s.id === 'date')?.value.indexOf(year) > -1} />
+                            <ListItemText primary={year} />
+                        </MenuItem>)}
+                </Select>
+            </FormControl>
+        </Box>
     )
 }
 
@@ -95,10 +100,10 @@ const Table = ({
     return (
         <>
 
-            <div className='d-flex flex-column-reverse flex-md-row'>
+            <div className='d-flex flex-column-reverse justify-content-end flex-md-row bg-white'>
                 {name && <div className='p-3 w-auto' style={{ color: dark ? 'white' : 'black', backgroundColor: dark ? theme.palette.primary.main : 'white', textAlign: 'center', flexGrow: 1 }}>{name}</div>}
-                {yearFiltering && <div className='w-auto' style={{ flexGrow: 1 }}><SelectYearFilter years={getYears()} setYears={setFilter} selectedYears={state.filters.filter(f => f.id === 'date')} /></div>}
-                {searching && <div className='w-auto mx-3' ><GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} /></div>}
+                {yearFiltering && <div style={{ flexGrow: 1 }}><SelectYearFilter years={getYears()} setYears={setFilter} selectedYears={state.filters.filter(f => f.id === 'date')} /></div>}
+                {searching && <div className='mx-3' ><GlobalFilter preGlobalFilteredRows={preGlobalFilteredRows} globalFilter={state.globalFilter} setGlobalFilter={setGlobalFilter} /></div>}
             </div>
             <table className='table'>
                 <thead style={{ color: dark ? 'white' : 'black', backgroundColor: dark ? theme.palette.primary.main : 'white' }}>

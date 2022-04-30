@@ -130,6 +130,10 @@ const Dashboard = () => {
             if (data.regNumber) setRegNumber(data.regNumber);
             if (data.email) setEmail(data.email);
             setStrava(data.isStravaConnected);
+        }).then((status) => {
+            if(status === 401){
+                auth.logout();
+            }
         });
     }, []);
 
@@ -149,6 +153,10 @@ const Dashboard = () => {
                     type: item.type
                 });
             }));
+        }).then((status) => {
+            if(status === 401){
+                auth.logout();
+            }
         });
     }, []);
 

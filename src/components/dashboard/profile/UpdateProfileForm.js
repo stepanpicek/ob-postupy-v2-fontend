@@ -61,8 +61,10 @@ const UpdateProfileForm = (props) => {
             if (data.regNumber) setRegNumber(data.regNumber);
             if (data.birthdate) setBirthday(data.birthdate);
             if (data.email) setEmail(data.email);
-        }).catch(() => {
-            alert.error("Nepovedlo se načíst profilové informace.", true);
+        }).then((status) => {
+            if(status === 401){
+                auth.logout();
+            }
         });
     }, []);
 

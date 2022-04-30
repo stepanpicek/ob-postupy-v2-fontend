@@ -9,6 +9,9 @@
 .popover{    
     position: fixed;
     z-index: 1000;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .cover{
@@ -17,4 +20,7 @@
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 500;
+    background-color: black;
+    opacity: 0.5;
 }

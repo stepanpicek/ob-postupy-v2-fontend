@@ -100,6 +100,10 @@ const PrivateRaces = () => {
                     type: GetType(item.type)
                 });
             }));
+        }).then((status) => {
+            if(status === 401){
+                auth.logout();
+            }
         });
     }, []);
 

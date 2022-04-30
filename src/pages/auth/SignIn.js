@@ -14,7 +14,6 @@ import useHttp from '../../hooks/use-http';
 import useAuth from '../../hooks/use-auth';
 import { Card } from 'react-bootstrap';
 import useAlertWrapper from '../../hooks/use-alert';
-import { i } from 'mathjs';
 
 const SignIn = () => {
     const login = useRef('');
@@ -29,7 +28,7 @@ const SignIn = () => {
         if (auth.isLoggedIn) {
             navigate("/ucet");
         }
-    }, [auth.isLoggedIn]);
+    }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();

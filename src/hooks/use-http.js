@@ -14,7 +14,7 @@ const useHttp = () => {
         body: requestConfig.body && requestConfig.body instanceof FormData ? requestConfig.body :
           requestConfig.body ? JSON.stringify(requestConfig.body) : null,
       });
-
+      setIsLoading(false);
       if (!response.ok) {
         if(response.status >= 500){
           alert.error("Nastal neočekávatelný problém.", true);
@@ -39,7 +39,8 @@ const useHttp = () => {
       }
       applyData(data);
 
-    } catch (err) {
+    } catch (err) {      
+      setIsLoading(false);
       if(err.message && err.message.includes("Failed to fetch")){
         alert.error("Zkontrolujte své internetové připojení a zkuste to znovu.");
       }
@@ -47,9 +48,6 @@ const useHttp = () => {
         alert.error("Nastal neočekávatelný problém.", true);
       }
       return 500;
-    }
-    finally {
-      setIsLoading(false);
     }
   }, []);
 

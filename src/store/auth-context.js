@@ -1,6 +1,5 @@
 import jwtDecode from 'jwt-decode';
 import { useState, useEffect, useCallback, createContext } from 'react';
-import useAuth from '../hooks/use-auth';
 
 let logoutTimer;
 const TOKEN_NAME = 'obpostupy.token';
@@ -40,23 +39,22 @@ const retrieveStoredToken = () => {
     return null;
 };
 
-export const AuthContextProvider = (props) => {
-    
-    const tokenData = retrieveStoredToken();
-    let initialToken;
-    let rolesToken;
-    let idToken;
-    if (tokenData) {
-        initialToken = tokenData.token;
-        rolesToken = tokenData.roles;
-        idToken = tokenData.id;
-    }
-    
-    const [token, setToken] = useState(initialToken);
-    const [roles, setRoles] = useState(rolesToken);
-    const [id, setId] = useState(idToken);
+export const AuthContextProvider = (props) => {    
+        
+    const [token, setToken] = useState(null);
+    const [roles, setRoles] = useState(null);
+    const [id, setId] = useState(null);
 
     const userIsLoggedIn = !!token;
+    
+    useEffect(() => {
+        const tokenData = retrieveStoredToken();
+        if (tokenData) {
+            setToken(tokenData.token);
+            setRoles(tokenData.roles);
+            setId(tokenData.id);
+        }
+    }, []);
 
     const logoutHandler = useCallback(() => {
         setToken(null);
@@ -70,8 +68,8 @@ export const AuthContextProvider = (props) => {
     }, []);
 
     const loginHandler = (token) => {
+        localStorage.setItem(TOKEN_NAME, token);        
         setToken(token);
-        localStorage.setItem(TOKEN_NAME, token);
         const decodedToken = jwtDecode(token);
         setRoles(decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
         setId(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);

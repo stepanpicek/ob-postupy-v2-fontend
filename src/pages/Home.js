@@ -85,10 +85,10 @@ const Home = () => {
     return (
         <div className="container">
             <div className="d-flex flex-md-row flex-column-reverse d-flex justify-content-center m" >
-                <ContentBox sx={{ width: '100%', ml: 3 }}>
+                <ContentBox sx={{ width: '100%'}}>
                     <Table columns={columns} data={data} yearFiltering searching initialState={{ sortBy: [{ id: 'date', desc: true }], pageSize: 10 }} />
                 </ContentBox>
-                <ContentBox sx={{ width: '100%', ml: 3 }}>
+                <ContentBox sx={{ width: '100%'}} className="ms-md-3 mb-md-0 mb-3">
                     <div className="ml-3 d-flex flex-column align-items-center justify-content-center" dangerouslySetInnerHTML={{__html: GetInfo()}}>
                     </div>
                 </ContentBox>

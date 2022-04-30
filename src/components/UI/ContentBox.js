@@ -11,6 +11,7 @@ const ContentBox = ({ children, sx, className }) => {
                 backgroundColor: 'white',
                 ...sx
             }}
+            className = {className}
         >{children}
         </Box>);
 }

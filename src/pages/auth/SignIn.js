@@ -40,7 +40,7 @@ const SignIn = () => {
         };
 
         sendRequest({
-            url: 'https://localhost:5001/Authenticate/login',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Authenticate/login`,
             method: 'POST',
             body: loginData,
             headers: { 'Content-Type': 'application/json', 'accept': '*/*' },

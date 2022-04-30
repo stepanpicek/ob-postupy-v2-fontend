@@ -24,7 +24,7 @@ const PasswordReset = () => {
         var token = searchParams.get('token');
         var email = searchParams.get('email');
         sendRequest({
-            url: 'https://localhost:5001/Authenticate/reset-password',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Authenticate/reset-password`,
             method: 'POST',
             body: {
                 email: email,

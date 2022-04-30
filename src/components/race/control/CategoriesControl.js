@@ -7,6 +7,7 @@ import useHttp from "../../../hooks/use-http";
 import { animationActions } from '../../../store/animation';
 import race, { raceActions } from "../../../store/race";
 import CompetitorsControl from "./CompetitorsControl";
+import SearchControl from './SearchControl';
 
 const CategoriesControl = () => {
     const dispatch = useDispatch();
@@ -18,7 +19,7 @@ const CategoriesControl = () => {
 
     useEffect(() => {
         if (!raceId) return;
-        sendRequest({ url: `https://localhost:5001/result/categories/${raceId}` }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/result/categories/${raceId}` }, (data) => {
             dispatch(raceActions.setCategories(data.categories));
         });
     }, [raceId]);
@@ -33,6 +34,17 @@ const CategoriesControl = () => {
         dispatch(raceActions.changeCategory(id));
         dispatch(raceActions.changeCourse(courseId));
     }
+
+    const handleSearchCategory = (id) => {
+        let category = categories.find(c => c.id == id);
+        let courseId = -1;
+        if (category) {
+            courseId = category.courseId;
+        }
+        dispatch(raceActions.changeCategory(id));
+        dispatch(raceActions.changeCourse(courseId));
+    }
+
 
     const handlePlayAll = () => {
         dispatch(animationActions.changeIsAnimationOn());
@@ -49,6 +61,7 @@ const CategoriesControl = () => {
                     Kategorie: <b>{categories.find(c => c.id == selectedCategory).name}</b>
                     <IconButton onClick={handlePlayAll} style={{ color: isAnimationOn ? 'red' : 'white' }} className="ms-auto"><PlayArrowIcon /></IconButton>
                 </Box>}
+            {selectedCategory < 0 && <SearchControl onSearchCategory={handleSearchCategory} />}
             <CompetitorsControl />
         </Box>
     );

@@ -1,0 +1,13 @@
+.person:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.category{
+    font-weight: bold;
+}
+
+.category:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}

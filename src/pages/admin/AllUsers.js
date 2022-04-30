@@ -40,7 +40,7 @@ const AllUsers = () => {
 
     const handleAddAdmin = (id) => {
         sendRequest({
-            url: `https://localhost:5001/Role/add-admin`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/Role/add-admin`,
             method: 'POST',
             body: {userId: id},
             responseType: 'empty',
@@ -53,7 +53,7 @@ const AllUsers = () => {
 
     const handleRemoveAdmin = (id) => {
         sendRequest({
-            url: `https://localhost:5001/Role/remove-admin`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/Role/remove-admin`,
             method: 'POST',
             body: {userId: id},            
             responseType: 'empty',
@@ -139,7 +139,7 @@ const AllUsers = () => {
 
     const updateTable = () => {
         sendRequest({
-            url: `https://localhost:5001/Profile/users`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/Profile/users`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setRows(data.users);

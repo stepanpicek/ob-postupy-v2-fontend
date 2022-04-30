@@ -23,7 +23,7 @@ const PrivateRaces = () => {
     const deleteRaceHandler = (id) => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/race/${id}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/race/${id}`,
                 method: 'DELETE',
                 responseType: 'empty',
                 headers: { 'Authorization': `Bearer ${auth.token}` }
@@ -86,7 +86,7 @@ const PrivateRaces = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/race/by-user`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/by-user`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
 

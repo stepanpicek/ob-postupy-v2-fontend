@@ -23,7 +23,7 @@ const AllRaces = () => {
     const deleteRaceHandler = (id) => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/race/${id}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/race/${id}`,
                 method: 'DELETE',
                 responseType: 'empty',
                 headers: { 'Authorization': `Bearer ${auth.token}` }
@@ -89,7 +89,7 @@ const AllRaces = () => {
     ];
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/race/all`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/all`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
 

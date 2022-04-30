@@ -20,13 +20,13 @@ const OMap = () => {
     useEffect(() => {
         if (!raceId) return;    
 
-        sendRequest({ url: `https://localhost:5001/map/image/${raceId}`, responseType: 'blob' }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/map/image/${raceId}`, responseType: 'blob' }, (data) => {
             let objectURL = URL.createObjectURL(data);
             let image = new Image();
             image.src = objectURL;
             setImage(image);
         });
-        sendRequest({ url: `https://localhost:5001/map/info/${raceId}` }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/map/info/${raceId}` }, (data) => {
             dispatch(raceActions.addMapScale(data.scale));
             setCorners(data.position);
         });

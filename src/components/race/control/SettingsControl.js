@@ -50,30 +50,39 @@ const SettingsControl = () => {
             px: 3
         }} >
             <Typography variant="h6">Nastavení</Typography>
-            <div style={{ display: 'flex' }}>Průhlednost mapy: <b className="mx-2">{100 - transparency}%</b></div>
-            <Form.Range value={typeof transparency == 'number' ? 100 - transparency : 100} max={100} onChange={handleChangeTransparency} />
+            <fieldset className="w-100 race">
+                <legend>Mapa</legend>
+                <div style={{ display: 'flex' }}>Průhlednost mapy: <b className="mx-2">{100 - transparency}%</b></div>
+                <Form.Range value={typeof transparency == 'number' ? 100 - transparency : 100} max={100} onChange={handleChangeTransparency} />
+            </fieldset>
 
-            <div style={{ display: 'flex' }}>Délka ocasu: <b className="mx-2">{tailTime}</b></div>
-            <Form.Range value={snakeSize} min={0} step={10} max={1000} onChange={handleChangeSnakeSize} />
+            <fieldset className="w-100 race">
+                <legend>Přehrávání animace</legend>
+                <div style={{ display: 'flex' }}>Délka ocasu: <b className="mx-2">{tailTime}</b></div>
+                <Form.Range value={snakeSize} min={0} step={10} max={1000} onChange={handleChangeSnakeSize} />
 
-            <div style={{ display: 'flex' }}>Šířka ocasu: <b className="mx-2">{snakeWidth}px</b></div>
-            <Form.Range value={snakeWidth} onChange={handleChangeSnakeWidth} />
+                <div style={{ display: 'flex' }}>Šířka ocasu: <b className="mx-2">{snakeWidth}px</b></div>
+                <Form.Range value={snakeWidth} onChange={handleChangeSnakeWidth} />
 
-            <div style={{ display: 'flex' }}>Velikost hlavičky: <b className="mx-2">{snakeRadius}px</b></div>
-            <Form.Range value={snakeRadius} onChange={handleChangeSnakeRadius} />
+                <div style={{ display: 'flex' }}>Velikost hlavičky: <b className="mx-2">{snakeRadius}px</b></div>
+                <Form.Range value={snakeRadius} onChange={handleChangeSnakeRadius} />
 
-            <div style={{ display: 'flex' }}>Rychlost přehrávání: <b className="mx-2">{speed}x</b></div>
-            <Form.Select value={speed} onChange={handleChangeSpeed}>
-                <option value="1">1x</option>
-                <option value="2">2x</option>
-                <option value="5">5x</option>
-                <option value="10">10x</option>
-                <option value="20">20x</option>                  
-                <option value="50">50x</option>                 
-                <option value="100">100x</option>
-            </Form.Select>
+                <div style={{ display: 'flex' }}>Rychlost přehrávání: <b className="mx-2">{speed}x</b></div>
+                <Form.Select value={speed} onChange={handleChangeSpeed}>
+                    <option value="1">1x</option>
+                    <option value="2">2x</option>
+                    <option value="5">5x</option>
+                    <option value="10">10x</option>
+                    <option value="20">20x</option>
+                    <option value="50">50x</option>
+                    <option value="100">100x</option>
+                </Form.Select>
+            </fieldset>
 
-            <PathSettingsControl />
+            <fieldset className="w-100 race">
+                <legend>Styl zobrazené trasy</legend>
+                <PathSettingsControl />
+            </fieldset>
         </Box>
     );
 }

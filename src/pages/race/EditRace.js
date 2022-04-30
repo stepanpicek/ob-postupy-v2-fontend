@@ -25,7 +25,7 @@ const EditRace = () => {
 
     const handleUpdateRace = (data) => {
         sendRequest({
-            url: 'https://localhost:5001/race/update',
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/update`,
             method: 'POST',
             body: { ...data, raceKey: raceId },
             responseType: 'empty',
@@ -45,7 +45,7 @@ const EditRace = () => {
 
     const updateData = useCallback(() => {
         sendRequest({
-            url: `https://localhost:5001/race/edit/${raceId}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/edit/${raceId}`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setRaceData(data);

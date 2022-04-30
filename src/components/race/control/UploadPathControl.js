@@ -39,7 +39,7 @@ const UploadPathControl = () => {
             };
         });
 
-        sendRequest({ url: `https://localhost:5001/path/upload`, method: 'POST', body: {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/upload`, method: 'POST', body: {
             personResultId: id,
             path: pathForUpload
         }, responseType: 'empty', 

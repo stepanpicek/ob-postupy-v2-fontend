@@ -43,7 +43,7 @@ const SignUp = () => {
         console.log(registerData);
 
         sendRequest({
-            url: 'https://localhost:5001/Authenticate/register',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Authenticate/register`,
             method: 'POST',
             body: registerData,
             headers: { 'Content-Type': 'application/json' },

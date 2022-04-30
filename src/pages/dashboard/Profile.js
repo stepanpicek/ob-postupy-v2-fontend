@@ -16,7 +16,7 @@ const Profile = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/strava`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/strava`,
             headers: { 'Authorization': `Bearer ${auth.token}` }            
         }, (data) => {
             setIsStravaAuth(data.isAuth);
@@ -26,7 +26,7 @@ const Profile = () => {
 
     const handleDeleteStravaAuth = () => {
         sendRequest({
-            url: `https://localhost:5001/strava`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/strava`,
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${auth.token}` },
             responseType: 'empty'            

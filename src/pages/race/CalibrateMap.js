@@ -32,7 +32,7 @@ const CalibrateMap = () => {
 
     const updateData = useCallback(() => {
         sendRequest({
-            url: `https://localhost:5001/Race/edit/${raceId}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/Race/edit/${raceId}`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setRaceData(data);
@@ -51,7 +51,7 @@ const CalibrateMap = () => {
     const handleCalibrateMap = () => {
         setMapData(calibrateMap(mapImg.width, mapImg.height, calibCtx.realPoints, calibCtx.pixelPoints));
         sendRequest({
-            url: `https://localhost:5001/map/calibration/`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/map/calibration/`,
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
             body: { ...mapData, raceKey: raceId },

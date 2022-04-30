@@ -11,7 +11,7 @@ const Home = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        sendRequest({ url: `https://localhost:5001/race/all-public` }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/race/all-public` }, (data) => {
             setData(data.races.map((item) => {
                 return ({
                     ID: item.key,
@@ -26,7 +26,7 @@ const Home = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/settings/info`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/settings/info`,
             headers: { 'Content-Type': 'application/json' }
         }, (data) => {
             setInfo(data);

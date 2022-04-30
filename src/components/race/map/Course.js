@@ -22,7 +22,7 @@ const Course = () => {
             dispatch(raceActions.setCourse(null));
             return;
         }
-        sendRequest({ url: `https://localhost:5001/course/${courseId}` }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/course/${courseId}` }, (data) => {
             //setCourse(data);
             dispatch(raceActions.setCourse(parseCourseData(data)));
         });

@@ -21,7 +21,7 @@ const PasswordResetRequest = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         sendRequest({
-            url: 'https://localhost:5001/Authenticate/forgot-password',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Authenticate/forgot-password`,
             method: 'POST',
             body: {
                 email: email.current.value,

@@ -64,7 +64,7 @@ const Dashboard = () => {
     const deleteRaceHandler = (id) => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/race/${id}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/race/${id}`,
                 method: 'DELETE',
                 responseType: 'empty',
                 headers: { 'Authorization': `Bearer ${auth.token}` }
@@ -123,7 +123,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/profile/`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/profile/`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             if (data.firstName || data.lastName) setName(`${data.firstName} ${data.lastName}`);
@@ -135,7 +135,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/race/by-user`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/by-user`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
 
@@ -154,7 +154,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/race/participating`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/race/participating`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setParticipationRaces(data.races.map((item) => {

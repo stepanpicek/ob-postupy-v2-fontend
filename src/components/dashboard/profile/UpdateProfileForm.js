@@ -32,7 +32,7 @@ const UpdateProfileForm = (props) => {
             birthdate: birthday
         };
         sendRequest({
-            url: 'https://localhost:5001/Profile/update-profile',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Profile/update-profile`,
             method: 'POST',
             body: inputData,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
@@ -52,7 +52,7 @@ const UpdateProfileForm = (props) => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/Profile/${props.userId ? props.userId : ''}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/Profile/${props.userId ? props.userId : ''}`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             if (data.firstName) setFirstName(data.firstName);

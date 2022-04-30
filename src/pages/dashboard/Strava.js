@@ -15,7 +15,7 @@ const Strava = () => {
             <h1>Strava</h1>
             <ContentBox>
                 Aby bylo možné propojit váš účet se Stravou, je potřeba vybrat všechna oprávnění na Vaše soukromé aktivity, tzn. obě zátržítka nechat označené.
-                <a href={`https://localhost:5001/strava/auth/${auth.id}`}>Propojit</a>
+                <a href={`${process.env.REACT_APP_BACKEND_URI}/strava/auth/${auth.id}`}>Propojit</a>
             </ContentBox>
         </>
     );

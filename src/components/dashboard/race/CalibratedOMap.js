@@ -14,7 +14,7 @@ const CalibratedOMap = ({ raceId, mapImage, setMapImage }) => {
 
     useEffect(() => {
         sendRequest({
-            url: `https://localhost:5001/map/image/${raceId}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/map/image/${raceId}`,
             responseType: 'blob'
         }, (image) => {
             let mapImg = new Image();

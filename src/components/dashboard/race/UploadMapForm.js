@@ -29,7 +29,7 @@ const UploadMapForm = ({ isUploaded, isCalibrated, raceId, onUpdate }) => {
             formData.append('File', files[0], files[0].name);
 
             sendRequest({
-                url: `https://localhost:5001/map/`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/map/`,
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${auth.token}` },
                 body: formData,
@@ -43,7 +43,7 @@ const UploadMapForm = ({ isUploaded, isCalibrated, raceId, onUpdate }) => {
     const handleDeleteMap = () => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/map/${raceId}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/map/${raceId}`,
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${auth.token}` },
                 responseType: 'empty'
@@ -63,12 +63,12 @@ const UploadMapForm = ({ isUploaded, isCalibrated, raceId, onUpdate }) => {
     useEffect(() => {
         if (isUploaded && mapImage == null) {
             sendRequest({
-                url: `https://localhost:5001/map/image/${raceId}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/map/image/${raceId}`,
                 responseType: 'blob'
             }, (image) => { 
                 setMapImage(image);
                 sendRequest({
-                    url: `https://localhost:5001/map/info/${raceId}`
+                    url: `${process.env.REACT_APP_BACKEND_URI}/map/info/${raceId}`
                 }, (data) => { setMapData({corners: data.position, image: URL.createObjectURL(image)}) })
                     .catch(() => { });
             
@@ -98,7 +98,7 @@ const UploadMapForm = ({ isUploaded, isCalibrated, raceId, onUpdate }) => {
                 <Grid item xs={12} md={6}>
                     <Card>
                         {mapImage &&
-                            <a href={`https://localhost:5001/map/image/${raceId}`} target="_blank">
+                            <a href={`${process.env.REACT_APP_BACKEND_URI}/map/image/${raceId}`} target="_blank">
                                 <CardMedia
                                     component="img"
                                     height="160"

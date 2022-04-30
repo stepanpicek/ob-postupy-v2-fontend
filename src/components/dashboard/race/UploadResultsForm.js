@@ -35,7 +35,7 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
     const handleUploadResults = (data) => {
         if (data.orisId) {
             sendRequest({
-                url: `https://localhost:5001/result/oris/`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/result/oris/`,
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
                 body: { raceKey: raceId, orisId: data.orisId },
@@ -51,7 +51,7 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
                 formData.append('File', data[0], data[0].name);
 
                 sendRequest({
-                    url: `https://localhost:5001/result/`,
+                    url: `${process.env.REACT_APP_BACKEND_URI}/result/`,
                     method: 'POST',
                     headers: { 'Authorization': `Bearer ${auth.token}` },
                     body: formData,
@@ -66,7 +66,7 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
     const handleRemoveResults = () => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/result/${raceId}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/result/${raceId}`,
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
                 responseType: 'empty'
@@ -86,7 +86,7 @@ const UploadResultsForm = ({ isUploaded, raceDate, raceId, onUpdate }) => {
 
     const handleShowResults = () => {
         sendRequest({
-            url: `https://localhost:5001/result/${raceId}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/result/${raceId}`,
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setResults(data);

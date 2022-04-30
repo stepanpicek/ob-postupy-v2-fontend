@@ -14,8 +14,6 @@ const CompetitorsControl = () => {
     const [competitors, setCompetitors] = useState([]);
     const { isLoading, sendRequest } = useHttp();
     const dispatch = useDispatch();
-    const alert = useAlertWrapper();
-
 
     useEffect(() => {
         dispatch(animationActions.reset());
@@ -26,10 +24,23 @@ const CompetitorsControl = () => {
             setCompetitors([]);
             return;
         }
-        sendRequest({ url: `https://localhost:5001/result/category/${categoryId}` }, (data) => {
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/result/category/${categoryId}` }, (data) => {
             setCompetitors(data.people);
         });
     }, [categoryId]);
+
+    const handleRemovePath = (id) => {
+        setCompetitors((state) => {
+            let competitors = state.filter(s => s.id != id);
+            let competitor = state.find(s => s.id == id);
+            if(competitor){
+                competitor.isPathUploaded = false;
+                let newCompetitors = [...competitors, competitor];
+                return newCompetitors.sort((a,b) => a.position - b.position);
+            }
+            return competitors;
+        });
+    }
     
     if (isLoading) {
         return (
@@ -40,7 +51,7 @@ const CompetitorsControl = () => {
     return (
         <Box sx={{width: '100%'}}>
             {competitors.map((competitor) =>
-                <CompetitorControl key={competitor.id} competitor={competitor} />
+                <CompetitorControl key={competitor.id} competitor={competitor} onRemovePath={handleRemovePath}/>
             )}
         </Box>
     );

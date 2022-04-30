@@ -10,7 +10,7 @@ const CreateRace = () => {
 
     const handleCreateRace = (inputData) => {
         sendRequest({
-            url: 'https://localhost:5001/Race/create',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Race/create`,
             method: 'POST',
             body: inputData,
             responseType: "text",

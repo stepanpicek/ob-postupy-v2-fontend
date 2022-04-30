@@ -40,6 +40,18 @@
   color: #2e7d32 !important;
 }
 
+fieldset.race {
+  border: 1px dashed #eeeeee;
+  padding: 8px;
+  margin: 5px;
+  background: #545454;
+}
+
+legend {
+  font-size: medium;
+  font-weight: bold;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

@@ -26,7 +26,7 @@ const UploadCoursesForm = ({ isUploaded, raceId, onUpdate }) => {
             formData.append('File', files[0], files[0].name);
 
             sendRequest({
-                url: `https://localhost:5001/course/`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/course/`,
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${auth.token}` },
                 body: formData,
@@ -40,7 +40,7 @@ const UploadCoursesForm = ({ isUploaded, raceId, onUpdate }) => {
     const handleDeleteCourses = () => {
         var confirm = () => () => {
             sendRequest({
-                url: `https://localhost:5001/course/${raceId}`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/course/${raceId}`,
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${auth.token}` },
                 responseType: 'empty'
@@ -71,7 +71,7 @@ const UploadCoursesForm = ({ isUploaded, raceId, onUpdate }) => {
 
     const handleChangeCoursesToCategory = (data) => {
         sendRequest({
-            url: `https://localhost:5001/course/course-category/`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/course/course-category/`,
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'accept': '*/*', 'Authorization': `Bearer ${auth.token}` },
             body: {raceKey: raceId, courseCategories: data},
@@ -85,7 +85,7 @@ const UploadCoursesForm = ({ isUploaded, raceId, onUpdate }) => {
     const handleOpenChangeCoursesToCategory = () => {
         setOpenDialog(true);
         sendRequest({
-            url: `https://localhost:5001/course/course-category/${raceId}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/course/course-category/${raceId}`,
             headers: {'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setCourseToCategory(data);

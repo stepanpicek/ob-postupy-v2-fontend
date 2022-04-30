@@ -53,7 +53,7 @@ const RaceDetail = () => {
     let { raceId } = useParams();
 
     useEffect(() => {
-        sendRequest({ url: `https://localhost:5001/race/show/${raceId}`, responseType: 'empty' })
+        sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/race/show/${raceId}`, responseType: 'empty' })
         .then((status) => {
                 if(status){
                     if(status === 401 || status === 400){

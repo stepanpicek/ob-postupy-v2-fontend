@@ -45,7 +45,7 @@ const ManualPathControl = () => {
         console.log(splitPaths);
         sendRequest(
             {
-                url: `https://localhost:5001/path/draw`,
+                url: `${process.env.REACT_APP_BACKEND_URI}/path/draw`,
                 method: 'POST',
                 body: {
                     personResultId: id,

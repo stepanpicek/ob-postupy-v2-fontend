@@ -18,12 +18,14 @@ import { showPathActions } from "../../../store/show-path";
 import useAuth from "../../../hooks/use-auth";
 import useAlertWrapper from "../../../hooks/use-alert";
 import { DatePicker } from "@mui/lab";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import AlertDialog from "../../UI/AlertDialog";
 
 const colorArray = [
     "#FF0000", "#0000FF", "#FFFF00", "#008000", "#F5A623", "#50E3C2", "#800080", "#7ED321", "#008080", "#D2691E", "#A9A9A9", "#EE82EE", "#00FA9A", "#000000"
 ];
 
-const CompetitorControl = ({ competitor, initPlay }) => {
+const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
     const dispatch = useDispatch();
     const playAllTrigger = useSelector((state) => state.animation.playAllTrigger);
     const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
@@ -35,9 +37,13 @@ const CompetitorControl = ({ competitor, initPlay }) => {
     const { isLoading, sendRequest } = useHttp();
     const isFirstRun = useRef(true);
     const auth = useAuth();
+    const alert = useAlertWrapper();
     const [isStravaAuth, setIsStravaAuth] = useState(false);
     const [stravaDate, setStravaDate] = useState(null);
     const [stravaActivities, setStravaActivities] = useState([]);
+    const [alertDialog, setAlertDialog] = useState(false);
+    const [alertDialogContent, setAlertDialogContent] = useState(null);
+    const [alertDialogConfirm, setAlertDialogConfirm] = useState(null);
 
     useEffect(() => {
         if (isFirstRun.current) {
@@ -61,7 +67,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
         if (!openUploadDialog) return;
 
         sendRequest({
-            url: `https://localhost:5001/strava/`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/strava/`,
             headers: { 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setIsStravaAuth(data.isAuth);
@@ -75,7 +81,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
         if (!stravaDate) return;
 
         sendRequest({
-            url: `https://localhost:5001/strava/activities/${stravaDate}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/strava/activities/${stravaDate}`,
             headers: { 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             setStravaActivities(data.activities);
@@ -84,7 +90,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
 
     const handleUserPlay = () => {
         if (!isPlayed) {
-            sendRequest({ url: `https://localhost:5001/path/by-result/${competitor.id}` }, (data) => {
+            sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/by-result/${competitor.id}` }, (data) => {
                 let playerColor = colorArray[(competitor.position - 1) % colorArray.length];
                 dispatch(animationActions.addCompetitor(
                     {
@@ -126,7 +132,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
 
     const handleUploadStravaActivity = (id) => {
         sendRequest({
-            url: `https://localhost:5001/strava/activity/${id}`,
+            url: `${process.env.REACT_APP_BACKEND_URI}/strava/activity/${id}`,
             headers: { 'Authorization': `Bearer ${auth.token}` }
         }, (data) => {
             let points = data.locations.map(l => [l.lat, l.lon, l.timestamp]);
@@ -181,7 +187,7 @@ const CompetitorControl = ({ competitor, initPlay }) => {
             dispatch(showPathActions.remove(competitor.id))
         }
         else {
-            sendRequest({ url: `https://localhost:5001/path/with-speeds/${competitor.id}` }, (data) => {
+            sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/with-speeds/${competitor.id}` }, (data) => {
                 dispatch(showPathActions.add(
                     {
                         id: competitor.id,
@@ -191,6 +197,27 @@ const CompetitorControl = ({ competitor, initPlay }) => {
                 ));
             });
         }
+    }
+
+    const handleDeletePath = () => {
+        var confirm = () => () => {
+            setAlertDialog(false);
+            sendRequest({
+                url: `${process.env.REACT_APP_BACKEND_URI}/path/${competitor.id}`,
+                method: 'DELETE',
+                responseType: 'empty',
+                headers: { 'Authorization': `Bearer ${auth.token}` }
+            }).then((status) => {
+                if (!status) {
+                    onRemovePath(competitor.id);
+                    alert.success("Trasa byla smazána.");
+                }
+            });
+        }
+
+        setAlertDialogConfirm(confirm);
+        setAlertDialogContent(<>Opravdu chcete smazat trasu pro závodníka <strong>{competitor.firstName} {competitor.lastName}</strong>? </>);
+        setAlertDialog(true);
     }
 
     return (
@@ -217,10 +244,19 @@ const CompetitorControl = ({ competitor, initPlay }) => {
                         </>
                     }
                     {competitor.isPathUploaded &&
-
-                        <Button size="small" sx={{ color: 'white' }} startIcon={isPathShown() ? <VisibilityOffIcon /> : <VisibilityIcon />} onClick={handleViewPath}>
-                            {isPathShown() ? "Skrýt trasu" : "Zobrazit trasu"}
-                        </Button>
+                        <>
+                            <Button size="small" sx={{ color: 'white' }} startIcon={isPathShown() ? <VisibilityOffIcon /> : <VisibilityIcon />} onClick={handleViewPath}>
+                                {isPathShown() ? "Skrýt trasu" : "Zobrazit trasu"}
+                            </Button>
+                            {auth.isLoggedIn && auth.roles.includes("Admin") &&
+                                <>
+                                    <Button size="small" color="error" startIcon={<DeleteForeverIcon />} onClick={handleDeletePath}>
+                                        {"Smazat trasu"}
+                                    </Button>
+                                    <AlertDialog open={alertDialog} close={() => { setAlertDialog(false) }} confirm={alertDialogConfirm} content={alertDialogContent} />
+                                </>
+                            }
+                        </>
                     }
                     {
                         /*

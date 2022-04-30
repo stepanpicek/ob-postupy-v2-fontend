@@ -24,7 +24,7 @@ const ChangePasswordForm = () => {
         };
 
         sendRequest({
-            url: 'https://localhost:5001/Authenticate/password',
+            url: `${process.env.REACT_APP_BACKEND_URI}/Authenticate/password`,
             method: 'POST',
             body: inputData,
             responseType: 'empty',

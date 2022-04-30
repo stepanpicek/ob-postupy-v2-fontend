@@ -74,7 +74,7 @@ const TopMenu = (props) => {
                 </Typography>
                 {auth.isLoggedIn && AuthMenu}
                 {!auth.isLoggedIn && NonAuthMenu}
-                <Button color="inherit" startIcon={<InfoIcon />}>Info</Button>
+                {/*<Button color="inherit" startIcon={<InfoIcon />}>Info</Button>*/}
             </Toolbar>
         </AppBar>
     );

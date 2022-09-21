@@ -2,10 +2,11 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import animation from './animation';
 import manualPath from './manual-path';
 import race from './race';
+import showHeatmap from './show-heatmap';
 import showPath from './show-path';
 import uploadPath from './upload-path';
 
-const combinedReducer = combineReducers({race: race, animation: animation, manualPath: manualPath, uploadPath: uploadPath, showPath: showPath});
+const combinedReducer = combineReducers({race: race, animation: animation, manualPath: manualPath, uploadPath: uploadPath, showPath: showPath, showHeatmap: showHeatmap});
 
 const rootReducer = (state, action) => {
     if (action.type === 'reset-all') {

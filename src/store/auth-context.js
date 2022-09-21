@@ -15,7 +15,7 @@ const AuthContext = createContext({
 
 const calculateRemainingTime = (expirationTime) => {
     const currentTime = new Date().getTime();
-    const adjExpirationTime = new Date(expirationTime).getTime();
+    const adjExpirationTime = Date.parse(expirationTime);
     const remainingDuration = adjExpirationTime - currentTime;
     return remainingDuration;
 };
@@ -71,6 +71,7 @@ export const AuthContextProvider = (props) => {
         localStorage.setItem(TOKEN_NAME, token);        
         setToken(token);
         const decodedToken = jwtDecode(token);
+        console.log(decodedToken);
         setRoles(decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"]);
         setId(decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"]);
         const remainingTime = calculateRemainingTime(decodedToken["expiration"]);

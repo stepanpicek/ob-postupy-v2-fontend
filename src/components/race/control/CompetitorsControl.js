@@ -6,6 +6,7 @@ import useAlertWrapper from "../../../hooks/use-alert";
 import useHttp from "../../../hooks/use-http";
 import { animationActions } from "../../../store/animation";
 import { showPathActions } from "../../../store/show-path";
+import { showHeatmapActions } from "../../../store/show-heatmap";
 import CompetitorControl from "./CompetitorControl";
 
 const CompetitorsControl = () => {
@@ -18,6 +19,7 @@ const CompetitorsControl = () => {
     useEffect(() => {
         dispatch(animationActions.reset());
         dispatch(showPathActions.removeAll());
+        dispatch(showHeatmapActions.removeAll());
 
         if (!categoryId) return;
         if (categoryId < 0) {

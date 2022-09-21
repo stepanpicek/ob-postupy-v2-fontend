@@ -16,7 +16,7 @@ const MapLayers = () => {
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 </LayersControl.BaseLayer>
             </LayersControl>
-        </>
+         </>
     );
 }
 

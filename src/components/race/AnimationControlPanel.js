@@ -4,7 +4,7 @@ import { useState } from "react";
 import AnimationSlider from "./animation/AnimationSlider";
 import PlayControl from "./animation/PlayControl";
 
-const AnimationControlPanel = () => {
+const AnimationControlPanel = ({isSmall}) => {
     const theme = useTheme();
     const [index, setIndex] = useState(0);
 

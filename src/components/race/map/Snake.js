@@ -27,7 +27,7 @@ const Snake = ({ color, position, name, tail, nextPosition }) => {
                     fillOpacity: 1,
                     fillColor: color
                 }} radius={snakeRadius} pane="markerPane" ref={head} >
-                    <Tooltip opacity={1} className="snake-label"><div style={{ color: color ?? 'red' }}>{name}</div></Tooltip>
+                    <Tooltip opacity={1} permanent={true} className="snake-label"><div style={{ color: color ?? 'red' }}>{name}</div></Tooltip>
                 </Circle>
                 {tail.length > 1 &&
                     <Polyline positions={tail} pathOptions={{

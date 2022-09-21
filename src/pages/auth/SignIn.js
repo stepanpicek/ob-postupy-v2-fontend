@@ -102,9 +102,18 @@ const SignIn = () => {
                                 fullWidth
                                 variant="contained"
                                 color="success"
-                                sx={{ mt: 3, mb: 2 }}
+                                sx={{ mt: 2 }}
                             >
                                 Přihlásit
+                            </Button>
+                            <Button
+                                fullWidth
+                                variant="outlined"
+                                color="success"
+                                sx={{ mt: 1, mb: 2 }}
+                                endIcon={<img src="/oris.jpg" />}
+                            >
+                                Přihlásit přes ORIS
                             </Button>
                             <Grid container>
                                 <Grid item xs>

@@ -39,7 +39,8 @@ const useHttp = () => {
       }
       applyData(data);
 
-    } catch (err) {      
+    } catch (err) {   
+      console.log(err);   
       setIsLoading(false);
       if(err.message && err.message.includes("Failed to fetch")){
         alert.error("Zkontrolujte své internetové připojení a zkuste to znovu.");

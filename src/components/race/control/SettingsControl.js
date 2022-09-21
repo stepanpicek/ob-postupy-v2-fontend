@@ -4,6 +4,7 @@ import { Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { animationActions } from "../../../store/animation";
 import { raceActions } from "../../../store/race";
+import HeatmapSettingsControl from "./HeatmapSettingsControl";
 import PathSettingsControl from "./PathSettingsControl";
 
 const SettingsControl = () => {
@@ -78,10 +79,14 @@ const SettingsControl = () => {
                     <option value="100">100x</option>
                 </Form.Select>
             </fieldset>
+            <fieldset className="w-100 race">
+                <legend>Nastavení zobrazené trasy</legend>
+                <PathSettingsControl />
+            </fieldset>
 
             <fieldset className="w-100 race">
-                <legend>Styl zobrazené trasy</legend>
-                <PathSettingsControl />
+                <legend>Nastavení heatmapy</legend>
+                <HeatmapSettingsControl />
             </fieldset>
         </Box>
     );

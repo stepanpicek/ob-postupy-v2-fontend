@@ -3,11 +3,7 @@ import {createSlice} from '@reduxjs/toolkit';
 const initialShowPathState = {
     paths: [],
     weight: 5,
-    borderWeight: 1,
-    color: [ "#ff0000", "#ffff00", "#008800"],
-    borderColor: "#000000",
-    min: 0,
-    max: 15
+    transparency: 99
 };
 
 const showPathSlice = createSlice({
@@ -26,20 +22,14 @@ const showPathSlice = createSlice({
         changeWeight(state, action){
             state.weight = action.payload;
         },
-        changeBorderWeight(state, action){
-            state.borderWeight = action.payload;
+        changePathColor(state, action){
+            let element = state.paths.find(c => c.id === action.payload.id);
+            if (element) {
+                element.color = action.payload.color;
+            }
         },
-        changeColor(state, action){
-            state.color = action.payload;
-        },
-        changeBorderColor(state, action){
-            state.borderColor = action.payload;
-        },
-        changeMin(state, action){
-            state.min = action.payload;
-        },
-        changeMax(state, action){
-            state.max = action.payload;
+        changeTransparency(state, action){
+            state.transparency = action.payload;
         }
     }
 });

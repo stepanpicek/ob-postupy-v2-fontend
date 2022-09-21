@@ -28,8 +28,7 @@ const RaceDetailStyle = {
     },
     mapContainer: {
         marginTop: '64px',
-        width: '100%',
-        height: 'calc(100% - 64px)'
+        width: '100%'
     }
 };
 
@@ -74,16 +73,23 @@ const RaceDetail = () => {
             <Box sx={{ display: 'flex', flex: 1 }}>
                 <TopMenu isToggled={true} isRaceDetail={true} onOpenMenu={openMenuHandler} />
                 <MainRaceMenu width={menuWidth} isSmall={width <= sm} isOpened={isOpened} onOpenMenu={openMenuHandler} />
-                <Box sx={{ flexShrink: 1, display: 'flex', flexDirection: 'column', width: '100%', height: '100%', marginLeft: !isOpened && width > sm ? `-${menuWidth}px` : 0 }}>
+                <Box sx={{ 
+                    flexShrink: 1, 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    width: '100%', 
+                    height: '100%', 
+                    marginLeft: !isOpened && width > sm ? `-${menuWidth}px` : width <= sm ? `-${width}px` : 0 ,
+                    marginTop: width <= sm ? `-8px` : 0 }}>
                     <div style={RaceDetailStyle.main}>
                         <Box style={RaceDetailStyle.map}>
-                            <MapContainer style={RaceDetailStyle.mapContainer} center={initialPosition} zoom={11}>
+                            <MapContainer style={{...RaceDetailStyle.mapContainer, height: `calc(100% - ${width <= sm ? 56 : 64}px)`}} center={initialPosition} zoom={11}>
                                 <MapConsumer>{(map) => { setTimeout(function () { map.invalidateSize() }, 200); return null; }}</MapConsumer>
                                 <MapControl />
                             </MapContainer>
                         </Box>
                     </div>
-                    <div style={{ display: isAnimationOn ? 'block' : 'none' }} >
+                    <div style={{ display: isAnimationOn ? 'block' : 'none', zIndex: 10000 }}  className="fixed-bottom">
                         <AnimationControlPanel />
                     </div>
 

@@ -25,12 +25,12 @@ const MainRaceMenu = ({ width, isSmall, isOpened, onOpenMenu }) => {
     return (
         <Drawer
             sx={{
-                width: width,
+                width: isSmall ? '100%' : width,
                 flexShrink: 0,
-                [`& .MuiDrawer-paper`]: { width: width, boxSizing: 'border-box' }
+                [`& .MuiDrawer-paper`]: { width: isSmall ? '100%' : width, boxSizing: 'border-box' }
             }}
-            variant={isSmall ? "temporary" : "persistent"}
-            anchor="left"
+            variant= "persistent"
+            anchor= "left"
             open={isOpened}
             onClose={onOpenMenu}
         >

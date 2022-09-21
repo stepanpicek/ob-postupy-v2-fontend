@@ -8,6 +8,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import CreateIcon from '@mui/icons-material/Create';
 import MyLocationIcon from '@mui/icons-material/MyLocation';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import classes from './Competitor.module.css';
 import { manualPathActions } from "../../../store/manual-path";
@@ -15,6 +16,7 @@ import FileDropzone from "../../UI/FileDropzone";
 import { uploadPathActions } from "../../../store/upload-path";
 import { parseFIT, parseGPX } from "../../../services/parser";
 import { showPathActions } from "../../../store/show-path";
+import { showHeatmapActions } from "../../../store/show-heatmap";
 import useAuth from "../../../hooks/use-auth";
 import useAlertWrapper from "../../../hooks/use-alert";
 import { DatePicker } from "@mui/lab";
@@ -30,10 +32,12 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
     const playAllTrigger = useSelector((state) => state.animation.playAllTrigger);
     const isAnimationOn = useSelector((state) => state.animation.isAnimationOn);
     const shownPaths = useSelector((state) => state.showPath.paths);
+    const shownHeatmaps = useSelector((state) => state.showHeatmap.paths);
     const [isPlayed, setIsPlayed] = useState(false);
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [openUploadDialog, setOpenUploadDialog] = useState(false);
     const [color, setColor] = useState('#ff0000');
+    const [pathColor, setPathColor] = useState('#ff0000');
     const { isLoading, sendRequest } = useHttp();
     const isFirstRun = useRef(true);
     const auth = useAuth();
@@ -60,6 +64,11 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
 
     const isPathShown = () => {
         var result = shownPaths.filter(path => path.id === competitor.id);
+        return result && result.length > 0;
+    };
+
+    const isHeatmapShown = () => {
+        var result = shownHeatmaps.filter(path => path.id === competitor.id);
         return result && result.length > 0;
     };
 
@@ -115,6 +124,11 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
     const handleChangeColor = (color) => {
         setColor(color.hex);
         dispatch(animationActions.changeSnakeColor({ id: competitor.id, color: color.hex }));
+    }
+
+    const handleChangePathColor = (color) => {
+        setPathColor(color.hex);
+        dispatch(showPathActions.changePathColor({ id: competitor.id, color: color.hex }));
     }
 
     const handleManualPath = () => {
@@ -187,8 +201,28 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
             dispatch(showPathActions.remove(competitor.id))
         }
         else {
-            sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/with-speeds/${competitor.id}` }, (data) => {
+            sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/by-result/${competitor.id}` }, (data) => {
+                var pathColor = colorArray[(competitor.position - 1) % colorArray.length];
                 dispatch(showPathActions.add(
+                    {
+                        id: competitor.id,
+                        label: `${competitor.firstName} ${competitor.lastName}`,
+                        locations: data.locations,
+                        color: pathColor
+                    }
+                ));
+                setPathColor(pathColor);
+            });
+        }
+    }
+
+    const handleViewHeatmap = () => {
+        if (isHeatmapShown()) {
+            dispatch(showHeatmapActions.remove(competitor.id))
+        }
+        else {
+            sendRequest({ url: `${process.env.REACT_APP_BACKEND_URI}/path/with-speeds/${competitor.id}` }, (data) => {
+                dispatch(showHeatmapActions.add(
                     {
                         id: competitor.id,
                         label: `${competitor.firstName} ${competitor.lastName}`,
@@ -220,6 +254,15 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
         setAlertDialog(true);
     }
 
+    const handleShowAnalysis = () => {
+        sendRequest({
+            url: `${process.env.REACT_APP_BACKEND_URI}/path/analysis/${competitor.id}`,
+            headers: { 'Authorization': `Bearer ${auth.token}` }
+        }, (data) => {
+            console.log(data);
+        });
+    }
+
     return (
         <Box sx={{ background: '#545454', m: '1px', px: 1 }}>
             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
@@ -248,6 +291,15 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
                             <Button size="small" sx={{ color: 'white' }} startIcon={isPathShown() ? <VisibilityOffIcon /> : <VisibilityIcon />} onClick={handleViewPath}>
                                 {isPathShown() ? "Skrýt trasu" : "Zobrazit trasu"}
                             </Button>
+                            {isPathShown() &&
+                            <div className="d-flex justify-content-center align-items-center">
+                                
+                                <div className="me-1 css-1o89nu0-MuiButtonBase-root-MuiButton-root user-select-none">Změnit barvu trasy: </div>
+                                <ColorPicker color={pathColor} onChangeColor={handleChangePathColor} />
+                            </div>}
+                              <Button size="small" sx={{ color: 'white' }} startIcon={isHeatmapShown() ? <VisibilityOffIcon /> : <VisibilityIcon />} onClick={handleViewHeatmap}>
+                                {isHeatmapShown() ? "Skrýt heatmapu" : "Zobrazit heatmapu"}
+                            </Button>
                             {auth.isLoggedIn && auth.roles.includes("Admin") &&
                                 <>
                                     <Button size="small" color="error" startIcon={<DeleteForeverIcon />} onClick={handleDeletePath}>
@@ -259,9 +311,7 @@ const CompetitorControl = ({ competitor, initPlay, onRemovePath }) => {
                         </>
                     }
                     {
-                        /*
-                        <Button size="small" sx={{ color: 'white' }} startIcon={<BarChartIcon />}>Zobrazit statistiky</Button>
-                        */
+                        <Button size="small" sx={{ color: 'white' }} startIcon={<BarChartIcon />} onClick={handleShowAnalysis}>Zobrazit statistiky</Button>
                     }
                 </Box>
             }
